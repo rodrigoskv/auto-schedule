@@ -10,6 +10,7 @@ class Teacher:
 class ClassGroup:
     id: str
     name: str
+    shift: str | None = None
 
 @dataclass
 class Subject:
@@ -22,7 +23,10 @@ class Subject:
 class TimeSlot:
     id: str
     day_of_week: str
+    shift: str
     order: int
+    global_order: int
+    label: str | None = None
 
 @dataclass
 class Lesson:
