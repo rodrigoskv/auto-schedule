@@ -20,27 +20,13 @@ class Subject:
 
 @dataclass
 class TimeSlot:
-    id: int
-    day_of_week: int
-    period: int
+    id: str
+    day_of_week: str
+    order: int
 
 @dataclass
 class Lesson:
-    time_slot_id: int
+    teacher_id: str
     subject_id: str
     class_group_id: str
-    teacher_id: int
-
-@dataclass
-class Schedule:
-    lessons: list[Lesson]
-
-
-
-
-
-
-
-
-
-
+    time_slot_id: str
