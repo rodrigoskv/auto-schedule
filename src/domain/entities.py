@@ -4,7 +4,7 @@ from dataclasses import dataclass
 class Teacher:
     id: str
     name: str
-    avaliable_periods: list[str]
+    available_periods: list[str]
 
 @dataclass
 class ClassGroup:

@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 
-from entities import Lesson, TimeSlot, ClassGroup
+from entities import *
 
 @dataclass
 class Schedule:
@@ -103,11 +103,11 @@ class Schedule:
         ]
 
 
-def matrix_view(
-        self,
-        time_slots: list[TimeSlot],
-        class_groups: list[ClassGroup],
-) -> dict[str, dict[str, dict[str, dict[str, list[Lesson]]]]]:
+    def matrix_view(
+            self,
+            time_slots: list[TimeSlot],
+            class_groups: list[ClassGroup],
+    ) -> dict[str, dict[str, dict[str, dict[str, list[Lesson]]]]]:
         """
         Retorna uma representação matricial do horário,
 
