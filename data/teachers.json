@@ -1,0 +1,200 @@
+[
+  {
+    "id": "paula",
+    "name": "Paula",
+    "available_periods": [
+      "segunda_manha",
+      "terca_manha",
+      "quarta_manha",
+      "quinta_manha",
+      "sexta_manha"
+    ]
+  },
+  {
+    "id": "nelso",
+    "name": "Nelso",
+    "available_periods": [
+      "segunda_manha",
+      "terca_manha",
+      "quarta_manha",
+      "quinta_manha",
+      "sexta_manha"
+    ]
+  },
+  {
+    "id": "pablo",
+    "name": "Pablo",
+    "available_periods": [
+      "segunda_manha",
+      "terca_manha",
+      "quarta_manha",
+      "quinta_manha",
+      "sexta_manha"
+    ]
+  },
+  {
+    "id": "vanderleia",
+    "name": "Vanderleia",
+    "available_periods": [
+      "segunda_manha",
+      "terca_manha",
+      "quarta_manha",
+      "quinta_manha",
+      "sexta_manha"
+    ]
+  },
+  {
+    "id": "loreni",
+    "name": "Loreni",
+    "available_periods": [
+      "segunda_manha",
+      "terca_manha",
+      "quarta_manha",
+      "quinta_manha",
+      "sexta_manha"
+    ]
+  },
+  {
+    "id": "liane",
+    "name": "Liane",
+    "available_periods": [
+      "segunda_manha",
+      "terca_manha",
+      "quarta_manha",
+      "quinta_manha",
+      "sexta_manha"
+    ]
+  },
+  {
+    "id": "sandra",
+    "name": "Sandra",
+    "available_periods": [
+      "segunda_manha",
+      "terca_manha",
+      "quarta_manha",
+      "quinta_manha",
+      "sexta_manha"
+    ]
+  },
+  {
+    "id": "vania",
+    "name": "Vania",
+    "available_periods": [
+      "segunda_manha",
+      "terca_manha",
+      "quarta_manha",
+      "quinta_manha",
+      "sexta_manha"
+    ]
+  },
+  {
+    "id": "caroline",
+    "name": "Caroline",
+    "available_periods": [
+      "segunda_manha",
+      "terca_manha",
+      "quarta_manha",
+      "quinta_manha",
+      "sexta_manha"
+    ]
+  },
+  {
+    "id": "danieli",
+    "name": "Danieli",
+    "available_periods": [
+      "segunda_manha",
+      "terca_manha",
+      "quarta_manha",
+      "quinta_manha",
+      "sexta_manha"
+    ]
+  },
+  {
+    "id": "neila",
+    "name": "Neila",
+    "available_periods": [
+      "segunda_manha",
+      "terca_manha",
+      "quarta_manha",
+      "quinta_manha",
+      "sexta_manha"
+    ]
+  },
+  {
+    "id": "andrey",
+    "name": "Andrey",
+    "available_periods": [
+      "segunda_manha",
+      "terca_manha",
+      "quarta_manha",
+      "quinta_manha",
+      "sexta_manha"
+    ]
+  },
+  {
+    "id": "a_definir_historia_7a",
+    "name": "A Definir Historia 7A",
+    "available_periods": [
+      "segunda_manha",
+      "terca_manha",
+      "quarta_manha",
+      "quinta_manha",
+      "sexta_manha"
+    ]
+  },
+  {
+    "id": "claudemir",
+    "name": "Claudemir",
+    "available_periods": [
+      "segunda_manha",
+      "terca_manha",
+      "quarta_manha",
+      "quinta_manha",
+      "sexta_manha"
+    ]
+  },
+  {
+    "id": "madalena",
+    "name": "Madalena",
+    "available_periods": [
+      "segunda_manha",
+      "terca_manha",
+      "quarta_manha",
+      "quinta_manha",
+      "sexta_manha"
+    ]
+  },
+  {
+    "id": "debora",
+    "name": "Débora",
+    "available_periods": [
+      "segunda_manha",
+      "terca_manha",
+      "quarta_manha",
+      "quinta_manha",
+      "sexta_manha"
+    ]
+  },
+  {
+    "id": "liamara",
+    "name": "Liamara",
+    "available_periods": [
+      "segunda_manha",
+      "terca_manha",
+      "quarta_manha",
+      "quinta_manha",
+      "sexta_manha"
+    ]
+  },
+  {
+    "id": "maritania",
+    "name": "Maritânia",
+    "available_periods": [
+      "segunda_manha",
+      "terca_manha",
+      "quarta_manha",
+      "quinta_manha",
+      "sexta_manha"
+    ]
+  }
+]

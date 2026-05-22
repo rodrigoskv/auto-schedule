@@ -1,0 +1,32 @@
+[
+  { "id": "segunda_manha_1", "day_of_week": "segunda", "shift": "manha", "order": 1, "global_order": 1,  "label": "Segunda 1º aula" },
+  { "id": "segunda_manha_2", "day_of_week": "segunda", "shift": "manha", "order": 2, "global_order": 2,  "label": "Segunda 2º aula" },
+  { "id": "segunda_manha_3", "day_of_week": "segunda", "shift": "manha", "order": 3, "global_order": 3,  "label": "Segunda 3º aula" },
+  { "id": "segunda_manha_4", "day_of_week": "segunda", "shift": "manha", "order": 4, "global_order": 4,  "label": "Segunda 4º aula" },
+  { "id": "segunda_manha_5", "day_of_week": "segunda", "shift": "manha", "order": 5, "global_order": 5,  "label": "Segunda 5º aula" },
+
+  { "id": "terca_manha_1",   "day_of_week": "terca",   "shift": "manha", "order": 1, "global_order": 6,  "label": "Terça 1º aula" },
+  { "id": "terca_manha_2",   "day_of_week": "terca",   "shift": "manha", "order": 2, "global_order": 7,  "label": "Terça 2º aula" },
+  { "id": "terca_manha_3",   "day_of_week": "terca",   "shift": "manha", "order": 3, "global_order": 8,  "label": "Terça 3º aula" },
+  { "id": "terca_manha_4",   "day_of_week": "terca",   "shift": "manha", "order": 4, "global_order": 9,  "label": "Terça 4º aula" },
+  { "id": "terca_manha_5",   "day_of_week": "terca",   "shift": "manha", "order": 5, "global_order": 10, "label": "Terça 5º aula" },
+
+  { "id": "quarta_manha_1",  "day_of_week": "quarta",  "shift": "manha", "order": 1, "global_order": 11, "label": "Quarta 1º aula" },
+  { "id": "quarta_manha_2",  "day_of_week": "quarta",  "shift": "manha", "order": 2, "global_order": 12, "label": "Quarta 2º aula" },
+  { "id": "quarta_manha_3",  "day_of_week": "quarta",  "shift": "manha", "order": 3, "global_order": 13, "label": "Quarta 3º aula" },
+  { "id": "quarta_manha_4",  "day_of_week": "quarta",  "shift": "manha", "order": 4, "global_order": 14, "label": "Quarta 4º aula" },
+  { "id": "quarta_manha_5",  "day_of_week": "quarta",  "shift": "manha", "order": 5, "global_order": 15, "label": "Quarta 5º aula" },
+
+  { "id": "quinta_manha_1",  "day_of_week": "quinta",  "shift": "manha", "order": 1, "global_order": 16, "label": "Quinta 1º aula" },
+  { "id": "quinta_manha_2",  "day_of_week": "quinta",  "shift": "manha", "order": 2, "global_order": 17, "label": "Quinta 2º aula" },
+  { "id": "quinta_manha_3",  "day_of_week": "quinta",  "shift": "manha", "order": 3, "global_order": 18, "label": "Quinta 3º aula" },
+  { "id": "quinta_manha_4",  "day_of_week": "quinta",  "shift": "manha", "order": 4, "global_order": 19, "label": "Quinta 4º aula" },
+  { "id": "quinta_manha_5",  "day_of_week": "quinta",  "shift": "manha", "order": 5, "global_order": 20, "label": "Quinta 5º aula" },
+
+  { "id": "sexta_manha_1",   "day_of_week": "sexta",   "shift": "manha", "order": 1, "global_order": 21, "label": "Sexta 1º aula" },
+  { "id": "sexta_manha_2",   "day_of_week": "sexta",   "shift": "manha", "order": 2, "global_order": 22, "label": "Sexta 2º aula" },
+  { "id": "sexta_manha_3",   "day_of_week": "sexta",   "shift": "manha", "order": 3, "global_order": 23, "label": "Sexta 3º aula" },
+  { "id": "sexta_manha_4",   "day_of_week": "sexta",   "shift": "manha", "order": 4, "global_order": 24, "label": "Sexta 4º aula" },
+  { "id": "sexta_manha_5",   "day_of_week": "sexta",   "shift": "manha", "order": 5, "global_order": 25, "label": "Sexta 5º aula" }
+]
+

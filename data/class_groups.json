@@ -1,0 +1,37 @@
+[
+  {
+    "id": "9_ano",
+    "name": "9º ano",
+    "shift": "manha"
+  },
+  {
+    "id": "8_ano_a",
+    "name": "8º ano A",
+    "shift": "manha"
+  },
+  {
+    "id": "8_ano_b",
+    "name": "8º ano B",
+    "shift": "manha"
+  },
+  {
+    "id": "7_ano_a",
+    "name": "7º ano A",
+    "shift": "manha"
+  },
+  {
+    "id": "7_ano_b",
+    "name": "7º ano B",
+    "shift": "manha"
+  },
+  {
+    "id": "6_ano_a",
+    "name": "6º ano A",
+    "shift": "manha"
+  },
+  {
+    "id": "6_ano_b",
+    "name": "6º ano B",
+    "shift": "manha"
+  }
+]
