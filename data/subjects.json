@@ -1,0 +1,476 @@
+[
+  {
+    "id": "6_ano_a_artes_paula",
+    "name": "Artes",
+    "weekly_workload": 2,
+    "teacher_id": "paula"
+  },
+  {
+    "id": "6_ano_a_ciencias_nelso",
+    "name": "Ciências",
+    "weekly_workload": 3,
+    "teacher_id": "nelso"
+  },
+  {
+    "id": "6_ano_a_educacao_fisica_pablo",
+    "name": "Educação Física",
+    "weekly_workload": 3,
+    "teacher_id": "pablo"
+  },
+  {
+    "id": "6_ano_a_ensino_religioso_nelso",
+    "name": "Ensino Religioso",
+    "weekly_workload": 1,
+    "teacher_id": "nelso"
+  },
+  {
+    "id": "6_ano_a_espanhol_vanderleia",
+    "name": "Espanhol",
+    "weekly_workload": 2,
+    "teacher_id": "vanderleia"
+  },
+  {
+    "id": "6_ano_a_geografia_loreni",
+    "name": "Geografia",
+    "weekly_workload": 3,
+    "teacher_id": "loreni"
+  },
+  {
+    "id": "6_ano_a_historia_liane",
+    "name": "História",
+    "weekly_workload": 3,
+    "teacher_id": "liane"
+  },
+  {
+    "id": "6_ano_a_informatica_sandra",
+    "name": "Informática",
+    "weekly_workload": 3,
+    "teacher_id": "sandra"
+  },
+  {
+    "id": "6_ano_a_ingles_vania",
+    "name": "Inglês",
+    "weekly_workload": 2,
+    "teacher_id": "vania"
+  },
+  {
+    "id": "6_ano_a_matematica_caroline",
+    "name": "Matemática",
+    "weekly_workload": 4,
+    "teacher_id": "caroline"
+  },
+  {
+    "id": "6_ano_a_portugues_danieli",
+    "name": "Português",
+    "weekly_workload": 1,
+    "teacher_id": "danieli"
+  },
+  {
+    "id": "6_ano_a_portugues_neila",
+    "name": "Português",
+    "weekly_workload": 3,
+    "teacher_id": "neila"
+  },
+  {
+    "id": "6_ano_b_artes_paula",
+    "name": "Artes",
+    "weekly_workload": 2,
+    "teacher_id": "paula"
+  },
+  {
+    "id": "6_ano_b_ciencias_nelso",
+    "name": "Ciências",
+    "weekly_workload": 3,
+    "teacher_id": "nelso"
+  },
+  {
+    "id": "6_ano_b_educacao_fisica_pablo",
+    "name": "Educação Física",
+    "weekly_workload": 4,
+    "teacher_id": "pablo"
+  },
+  {
+    "id": "6_ano_b_ensino_religioso_nelso",
+    "name": "Ensino Religioso",
+    "weekly_workload": 1,
+    "teacher_id": "nelso"
+  },
+  {
+    "id": "6_ano_b_espanhol_vanderleia",
+    "name": "Espanhol",
+    "weekly_workload": 2,
+    "teacher_id": "vanderleia"
+  },
+  {
+    "id": "6_ano_b_geografia_loreni",
+    "name": "Geografia",
+    "weekly_workload": 3,
+    "teacher_id": "loreni"
+  },
+  {
+    "id": "6_ano_b_historia_andrey",
+    "name": "História",
+    "weekly_workload": 3,
+    "teacher_id": "andrey"
+  },
+  {
+    "id": "6_ano_b_informatica_sandra",
+    "name": "Informática",
+    "weekly_workload": 3,
+    "teacher_id": "sandra"
+  },
+  {
+    "id": "6_ano_b_ingles_vania",
+    "name": "Inglês",
+    "weekly_workload": 2,
+    "teacher_id": "vania"
+  },
+  {
+    "id": "6_ano_b_matematica_danieli",
+    "name": "Matemática",
+    "weekly_workload": 3,
+    "teacher_id": "danieli"
+  },
+  {
+    "id": "6_ano_b_portugues_danieli",
+    "name": "Português",
+    "weekly_workload": 4,
+    "teacher_id": "danieli"
+  },
+  {
+    "id": "7_ano_a_artes_paula",
+    "name": "Artes",
+    "weekly_workload": 2,
+    "teacher_id": "paula"
+  },
+  {
+    "id": "7_ano_a_ciencias_nelso",
+    "name": "Ciências",
+    "weekly_workload": 3,
+    "teacher_id": "nelso"
+  },
+  {
+    "id": "7_ano_a_educacao_fisica_pablo",
+    "name": "Educação Física",
+    "weekly_workload": 3,
+    "teacher_id": "pablo"
+  },
+  {
+    "id": "7_ano_a_ensino_religioso_danieli",
+    "name": "Ensino Religioso",
+    "weekly_workload": 1,
+    "teacher_id": "danieli"
+  },
+  {
+    "id": "7_ano_a_espanhol_vanderleia",
+    "name": "Espanhol",
+    "weekly_workload": 2,
+    "teacher_id": "vanderleia"
+  },
+  {
+    "id": "7_ano_a_geografia_loreni",
+    "name": "Geografia",
+    "weekly_workload": 3,
+    "teacher_id": "loreni"
+  },
+  {
+    "id": "7_ano_a_historia_a_definir_historia_7a",
+    "name": "História",
+    "weekly_workload": 3,
+    "teacher_id": "a_definir_historia_7a"
+  },
+  {
+    "id": "7_ano_a_informatica_sandra",
+    "name": "Informática",
+    "weekly_workload": 3,
+    "teacher_id": "sandra"
+  },
+  {
+    "id": "7_ano_a_ingles_vania",
+    "name": "Inglês",
+    "weekly_workload": 2,
+    "teacher_id": "vania"
+  },
+  {
+    "id": "7_ano_a_matematica_caroline",
+    "name": "Matemática",
+    "weekly_workload": 4,
+    "teacher_id": "caroline"
+  },
+  {
+    "id": "7_ano_a_portugues_neila",
+    "name": "Português",
+    "weekly_workload": 4,
+    "teacher_id": "neila"
+  },
+  {
+    "id": "7_ano_b_artes_paula",
+    "name": "Artes",
+    "weekly_workload": 2,
+    "teacher_id": "paula"
+  },
+  {
+    "id": "7_ano_b_ciencias_nelso",
+    "name": "Ciências",
+    "weekly_workload": 3,
+    "teacher_id": "nelso"
+  },
+  {
+    "id": "7_ano_b_educacao_fisica_claudemir",
+    "name": "Educação Física",
+    "weekly_workload": 3,
+    "teacher_id": "claudemir"
+  },
+  {
+    "id": "7_ano_b_ensino_religioso_loreni",
+    "name": "Ensino Religioso",
+    "weekly_workload": 1,
+    "teacher_id": "loreni"
+  },
+  {
+    "id": "7_ano_b_espanhol_vanderleia",
+    "name": "Espanhol",
+    "weekly_workload": 2,
+    "teacher_id": "vanderleia"
+  },
+  {
+    "id": "7_ano_b_geografia_loreni",
+    "name": "Geografia",
+    "weekly_workload": 3,
+    "teacher_id": "loreni"
+  },
+  {
+    "id": "7_ano_b_historia_liane",
+    "name": "História",
+    "weekly_workload": 3,
+    "teacher_id": "liane"
+  },
+  {
+    "id": "7_ano_b_informatica_sandra",
+    "name": "Informática",
+    "weekly_workload": 3,
+    "teacher_id": "sandra"
+  },
+  {
+    "id": "7_ano_b_ingles_vania",
+    "name": "Inglês",
+    "weekly_workload": 2,
+    "teacher_id": "vania"
+  },
+  {
+    "id": "7_ano_b_matematica_caroline",
+    "name": "Matemática",
+    "weekly_workload": 4,
+    "teacher_id": "caroline"
+  },
+  {
+    "id": "7_ano_b_portugues_neila",
+    "name": "Português",
+    "weekly_workload": 4,
+    "teacher_id": "neila"
+  },
+  {
+    "id": "8_ano_a_artes_paula",
+    "name": "Artes",
+    "weekly_workload": 2,
+    "teacher_id": "paula"
+  },
+  {
+    "id": "8_ano_a_ciencias_madalena",
+    "name": "Ciências",
+    "weekly_workload": 3,
+    "teacher_id": "madalena"
+  },
+  {
+    "id": "8_ano_a_educacao_fisica_claudemir",
+    "name": "Educação Física",
+    "weekly_workload": 3,
+    "teacher_id": "claudemir"
+  },
+  {
+    "id": "8_ano_a_ensino_religioso_danieli",
+    "name": "Ensino Religioso",
+    "weekly_workload": 1,
+    "teacher_id": "danieli"
+  },
+  {
+    "id": "8_ano_a_espanhol_neila",
+    "name": "Espanhol",
+    "weekly_workload": 2,
+    "teacher_id": "neila"
+  },
+  {
+    "id": "8_ano_a_geografia_loreni",
+    "name": "Geografia",
+    "weekly_workload": 3,
+    "teacher_id": "loreni"
+  },
+  {
+    "id": "8_ano_a_historia_andrey",
+    "name": "História",
+    "weekly_workload": 3,
+    "teacher_id": "andrey"
+  },
+  {
+    "id": "8_ano_a_informatica_sandra",
+    "name": "Informática",
+    "weekly_workload": 3,
+    "teacher_id": "sandra"
+  },
+  {
+    "id": "8_ano_a_ingles_debora",
+    "name": "Inglês",
+    "weekly_workload": 2,
+    "teacher_id": "debora"
+  },
+  {
+    "id": "8_ano_a_matematica_danieli",
+    "name": "Matemática",
+    "weekly_workload": 4,
+    "teacher_id": "danieli"
+  },
+  {
+    "id": "8_ano_a_portugues_neila",
+    "name": "Português",
+    "weekly_workload": 4,
+    "teacher_id": "neila"
+  },
+  {
+    "id": "8_ano_b_artes_paula",
+    "name": "Artes",
+    "weekly_workload": 2,
+    "teacher_id": "paula"
+  },
+  {
+    "id": "8_ano_b_ciencias_madalena",
+    "name": "Ciências",
+    "weekly_workload": 1,
+    "teacher_id": "madalena"
+  },
+  {
+    "id": "8_ano_b_ciencias_nelso",
+    "name": "Ciências",
+    "weekly_workload": 1,
+    "teacher_id": "nelso"
+  },
+  {
+    "id": "8_ano_b_educacao_fisica_pablo",
+    "name": "Educação Física",
+    "weekly_workload": 3,
+    "teacher_id": "pablo"
+  },
+  {
+    "id": "8_ano_b_ensino_religioso_loreni",
+    "name": "Ensino Religioso",
+    "weekly_workload": 1,
+    "teacher_id": "loreni"
+  },
+  {
+    "id": "8_ano_b_espanhol_vanderleia",
+    "name": "Espanhol",
+    "weekly_workload": 2,
+    "teacher_id": "vanderleia"
+  },
+  {
+    "id": "8_ano_b_geografia_loreni",
+    "name": "Geografia",
+    "weekly_workload": 3,
+    "teacher_id": "loreni"
+  },
+  {
+    "id": "8_ano_b_historia_andrey",
+    "name": "História",
+    "weekly_workload": 3,
+    "teacher_id": "andrey"
+  },
+  {
+    "id": "8_ano_b_informatica_sandra",
+    "name": "Informática",
+    "weekly_workload": 3,
+    "teacher_id": "sandra"
+  },
+  {
+    "id": "8_ano_b_ingles_debora",
+    "name": "Inglês",
+    "weekly_workload": 2,
+    "teacher_id": "debora"
+  },
+  {
+    "id": "8_ano_b_matematica_caroline",
+    "name": "Matemática",
+    "weekly_workload": 4,
+    "teacher_id": "caroline"
+  },
+  {
+    "id": "8_ano_b_portugues_neila",
+    "name": "Português",
+    "weekly_workload": 5,
+    "teacher_id": "neila"
+  },
+  {
+    "id": "9_ano_artes_paula",
+    "name": "Artes",
+    "weekly_workload": 2,
+    "teacher_id": "paula"
+  },
+  {
+    "id": "9_ano_ciencias_nelso",
+    "name": "Ciências",
+    "weekly_workload": 3,
+    "teacher_id": "nelso"
+  },
+  {
+    "id": "9_ano_educacao_fisica_pablo",
+    "name": "Educação Física",
+    "weekly_workload": 3,
+    "teacher_id": "pablo"
+  },
+  {
+    "id": "9_ano_ensino_religioso_danieli",
+    "name": "Ensino Religioso",
+    "weekly_workload": 1,
+    "teacher_id": "danieli"
+  },
+  {
+    "id": "9_ano_espanhol_danieli",
+    "name": "Espanhol",
+    "weekly_workload": 2,
+    "teacher_id": "danieli"
+  },
+  {
+    "id": "9_ano_geografia_loreni",
+    "name": "Geografia",
+    "weekly_workload": 3,
+    "teacher_id": "loreni"
+  },
+  {
+    "id": "9_ano_historia_andrey",
+    "name": "História",
+    "weekly_workload": 3,
+    "teacher_id": "andrey"
+  },
+  {
+    "id": "9_ano_informatica_liamara",
+    "name": "Informática",
+    "weekly_workload": 3,
+    "teacher_id": "liamara"
+  },
+  {
+    "id": "9_ano_ingles_maritania",
+    "name": "Inglês",
+    "weekly_workload": 2,
+    "teacher_id": "maritania"
+  },
+  {
+    "id": "9_ano_matematica_caroline",
+    "name": "Matemática",
+    "weekly_workload": 4,
+    "teacher_id": "caroline"
+  },
+  {
+    "id": "9_ano_portugues_danieli",
+    "name": "Português",
+    "weekly_workload": 4,
+    "teacher_id": "danieli"
+  }
+]
