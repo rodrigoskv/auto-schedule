@@ -1,6 +1,6 @@
-from dataclasses import dataclass, field
+from dataclasses import field
 
-from entities import *
+from domain.entities import *
 
 @dataclass
 class Schedule:
