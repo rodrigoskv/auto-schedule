@@ -66,7 +66,7 @@ Segunda 2º aula
 Terça 1º aula
 ```
 
-## Aula
+### Aula
 Representa uma aula alocada na grade.
 
 Campos principais:
