@@ -18,12 +18,11 @@ import json
 import sys
 import os
 
-# garante que o diretório atual (src/) esteja no path para imports relativos
-sys.path.insert(0, os.path.dirname(__file__))
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 from domain.entities import Teacher, ClassGroup, Subject, TimeSlot
 from ga.representation import GAContext, SLOT_ORDERING_STRATEGIES
-from ga.ga import run_ga
+from ga import run_ga
 
 # configuração
 
@@ -41,7 +40,6 @@ ELITISM_COUNT = 2
 TOURNAMENT_SIZE = 3
 
 
-
 # load dos dados
 def _load(filename: str, model) -> list:
     path = os.path.join(DATA_DIR, filename)
@@ -49,13 +47,23 @@ def _load(filename: str, model) -> list:
         return [model(**item) for item in json.load(f)]
 
 
-def load_teachers() -> list[Teacher]:         return _load("teachers.json", Teacher)
-def load_class_groups() -> list[ClassGroup]:  return _load("class_groups.json", ClassGroup)
-def load_subjects() -> list[Subject]:         return _load("subjects.json", Subject)
-def load_time_slots() -> list[TimeSlot]:      return _load("time_slots.json", TimeSlot)
+def load_teachers() -> list[Teacher]:
+    return _load("teachers.json", Teacher)
 
 
-#exibição do resultado
+def load_class_groups() -> list[ClassGroup]:
+    return _load("class_groups.json", ClassGroup)
+
+
+def load_subjects() -> list[Subject]:
+    return _load("subjects.json", Subject)
+
+
+def load_time_slots() -> list[TimeSlot]:
+    return _load("time_slots.json", TimeSlot)
+
+
+# exibição do resultado
 def print_best_schedule(schedule, fitness: float, context: GAContext):
     print("\n" + "=" * 70)
     print(f"  MELHOR HORÁRIO ENCONTRADO  |  Fitness: {fitness:.1f}")
@@ -64,7 +72,7 @@ def print_best_schedule(schedule, fitness: float, context: GAContext):
     for cg in context.class_groups:
         print(f"\n  Turma: {cg.name}")
         print(f"  {'Slot':<22} {'Disciplina':<30} {'Professor':<20}")
-        print(f"  {'-'*22} {'-'*30} {'-'*20}")
+        print(f"  {'-' * 22} {'-' * 30} {'-' * 20}")
 
         lessons = sorted(
             [l for l in schedule.lessons if l.class_group_id == cg.id],
@@ -131,4 +139,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

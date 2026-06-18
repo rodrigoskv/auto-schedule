@@ -11,7 +11,7 @@ import copy
 
 from domain.entities import Lesson
 from domain.schedule import Schedule
-from ga.representation import GAContext
+from .representation import GAContext
 
 
 def _get_lessons_indices_by_class_group(lessons: list[Lesson], cg_id: str) -> list[int]:

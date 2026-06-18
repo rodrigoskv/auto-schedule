@@ -1,10 +1,12 @@
 from dataclasses import dataclass
 
+
 @dataclass
 class Teacher:
     id: str
     name: str
     available_periods: list[str]
+
 
 @dataclass
 class ClassGroup:
@@ -12,12 +14,14 @@ class ClassGroup:
     name: str
     shift: str | None = None
 
+
 @dataclass
 class Subject:
     id: str
     name: str
     weekly_workload: int
     teacher_id: str
+
 
 @dataclass
 class TimeSlot:
@@ -27,6 +31,7 @@ class TimeSlot:
     order: int
     global_order: int
     label: str | None = None
+
 
 @dataclass
 class Lesson:

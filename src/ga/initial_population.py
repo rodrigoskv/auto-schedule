@@ -10,7 +10,7 @@ Cada indivíduo é um Schedule preenchido aleatoriamente:
 import random
 from domain.entities import Lesson
 from domain.schedule import Schedule
-from ga.representation import GAContext
+from .representation import GAContext
 
 
 def _build_lesson_pool(cg_id: str, context: GAContext) -> list[tuple[str, str]]:

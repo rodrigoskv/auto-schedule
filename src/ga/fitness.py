@@ -15,7 +15,7 @@ Soft constraints (penalidade 10 cada):
 from collections import Counter, defaultdict
 
 from domain.schedule import Schedule
-from ga.representation import GAContext
+from .representation import GAContext
 
 BASE_SCORE = 100_000
 PESO_HARD = 1_000

@@ -1,6 +1,7 @@
-from dataclasses import field
+from dataclasses import field, dataclass
 
-from domain.entities import *
+from domain.entities import Lesson, TimeSlot, ClassGroup
+
 
 @dataclass
 class Schedule:
@@ -51,7 +52,8 @@ class Schedule:
         """
         return [lesson for lesson in self.lessons if lesson.time_slot_id == time_slot_id]
 
-#não há duas aulas no mesmo horário para a mesma turma ou professor, se isso retornar mais de uma aula, há um erro no horário
+    # não há duas aulas no mesmo horário para a mesma turma ou professor, se isso retornar mais de uma aula,
+    # há um erro no horário
     def get_cell_lessons(
             self,
             time_slot_id: str,
@@ -60,7 +62,7 @@ class Schedule:
         """
         Retorna a aula associada a um horário e turma específicos.
         """
-        return[
+        return [
             lesson for lesson in self.lessons
             if lesson.time_slot_id == time_slot_id and lesson.class_group_id == class_group_id
         ]
@@ -73,7 +75,7 @@ class Schedule:
         """
         Retorna a aula associada a um horário e professor específicos.
         """
-        return[
+        return [
             lesson for lesson in self.lessons
             if lesson.time_slot_id == time_slot_id and lesson.teacher_id == teacher_id
         ]
@@ -101,7 +103,6 @@ class Schedule:
             if lesson.class_group_id == class_group_id
                and lesson.time_slot_id in valid_time_slot_ids
         ]
-
 
     def matrix_view(
             self,

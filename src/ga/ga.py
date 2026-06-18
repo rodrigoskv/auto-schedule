@@ -12,12 +12,12 @@ Fluxo por geração:
 """
 
 from domain.schedule import Schedule
-from ga.representation import GAContext
-from ga.initial_population import generate_population
-from ga.fitness import evaluate
-from ga.selection import tournament_selection
-from ga.crossover import crossover
-from ga.mutation import mutate
+from .representation import GAContext
+from .initial_population import generate_population
+from .fitness import evaluate
+from .selection import tournament_selection
+from .crossover import crossover
+from .mutation import mutate
 
 
 def run_ga(
