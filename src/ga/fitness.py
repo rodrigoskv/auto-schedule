@@ -1,88 +1,116 @@
 """
-Função de fitness por penalidades.
-
-Score = BASE - (PESO_HARD * total_hard) - (PESO_SOFT * total_soft)
-
-Hard constraints (penalidade 1000 cada):
-  - H1: Professor em dois slots iguais ao mesmo tempo
-  - H2: Turma em dois slots iguais ao mesmo tempo
-  - H3: Carga horária semanal não cumprida por disciplina
-
-Soft constraints (penalidade 10 cada):
-  - S1: Mais de 2 aulas da mesma disciplina no mesmo dia para uma turma
+Fitness = BASE - (PESO_HARD * total_hard) - (PESO_SOFT * total_soft)
 """
 
-from collections import Counter, defaultdict
+from collections import Counter
+from dataclasses import dataclass
 
-from domain.schedule import Schedule
-from ga.representation import GAContext
+from domain.constraints import (
+    BASE_SCORE,
+    H1_TEACHER_CONFLICT,
+    H2_CLASS_CONFLICT,
+    H3_WORKLOAD_DEFICIT,
+    H4_TEACHER_AVAILABILITY,
+    PESO_HARD,
+    PESO_SOFT,
+    S1_SUBJECT_CONCENTRATION,
+)
+from domain.entities import Schedule
+from ga.context import GAContext
 
-BASE_SCORE = 100_000
-PESO_HARD = 1_000
-PESO_SOFT = 10
+
+@dataclass
+class FitnessBreakdown:
+    fitness: float
+    hard: int
+    soft: int
+    counts: dict[str, int]
 
 
-def _penalize_hard(schedule: Schedule, context: GAContext) -> int:
-    """Retorna a contagem de violações de hard constraints."""
+def _count_h1(schedule: Schedule, context: GAContext) -> int:
     violations = 0
+    for slot in context.time_slots:
+        seen: dict[str, int] = {}
+        for lesson in schedule.get_lessons_for_time_slot(slot.id):
+            seen[lesson.teacher_id] = seen.get(lesson.teacher_id, 0) + 1
+        for count in seen.values():
+            if count > 1:
+                violations += count - 1
+    return violations
 
-    teacher_slot_count: dict[tuple[str, str], int] = defaultdict(int)
-    class_slot_count: dict[tuple[str, str], int] = defaultdict(int)
-    subject_count: dict[str, int] = defaultdict(int)
 
-    for lesson in schedule.lessons:
-        teacher_slot_count[(lesson.teacher_id, lesson.time_slot_id)] += 1
-        class_slot_count[(lesson.class_group_id, lesson.time_slot_id)] += 1
-        subject_count[lesson.subject_id] += 1
+def _count_h2(schedule: Schedule, context: GAContext) -> int:
+    violations = 0
+    for group in context.class_groups:
+        for slot in context.slots_for_class(group.id):
+            cell = schedule.get_cell_lessons(slot.id, group.id)
+            if len(cell) > 1:
+                violations += len(cell) - 1
+    return violations
 
-    # H1: Professor em dois slots iguais ao mesmo tempo
-    for count in teacher_slot_count.values():
-        if count > 1:
-            violations += count - 1
 
-    # H2: Turma em dois slots iguais ao mesmo tempo
-    for count in class_slot_count.values():
-        if count > 1:
-            violations += count - 1
-
-    # H3: Carga horária não cumprida
+def _count_h3(schedule: Schedule, context: GAContext) -> int:
+    violations = 0
     for subject in context.subjects:
-        allocated = subject_count.get(subject.id, 0)
+        allocated = sum(
+            1
+            for lesson in schedule.get_lessons_for_subject(subject.id)
+            if lesson.time_slot_id
+        )
         if allocated < subject.weekly_workload:
             violations += subject.weekly_workload - allocated
-
     return violations
 
 
-def _penalize_soft(schedule: Schedule, context: GAContext) -> int:
-    """Retorna a contagem de violações de soft constraints."""
+def _count_h4(schedule: Schedule, context: GAContext) -> int:
     violations = 0
-
-    # Monta: class_group -> day -> list[subject_id]
-    class_day_subjects: dict[str, dict[str, list[str]]] = defaultdict(lambda: defaultdict(list))
     for lesson in schedule.lessons:
-        ts = context.time_slots_by_id.get(lesson.time_slot_id)
-        if ts is None:
+        if not lesson.time_slot_id:
             continue
-        class_day_subjects[lesson.class_group_id][ts.day_of_week].append(lesson.subject_id)
-
-    # S1: Mais de 3 aulas da mesma disciplina no mesmo dia
-    for cg_id, days in class_day_subjects.items():
-        for day, subjects in days.items():
-            subject_freq = Counter(subjects)
-            for freq in subject_freq.values():
-                if freq > 2:
-                    violations += freq - 2
-
+        if not context.is_teacher_available(lesson.teacher_id, lesson.time_slot_id):
+            violations += 1
     return violations
+
+
+def _count_s1(schedule: Schedule, context: GAContext) -> int:
+    violations = 0
+    days = {slot.day_of_week for slot in context.time_slots}
+    shifts = {slot.shift for slot in context.time_slots}
+
+    for group in context.class_groups:
+        for day in days:
+            for shift in shifts:
+                day_lessons = schedule.get_lessons_for_class_group_by_day_and_shift(
+                    group.id,
+                    day,
+                    shift,
+                    context.time_slots,
+                )
+                frequencies = Counter(lesson.subject_id for lesson in day_lessons)
+                for frequency in frequencies.values():
+                    if frequency > 2:
+                        violations += frequency - 2
+    return violations
+
+
+def evaluate_details(schedule: Schedule, context: GAContext) -> FitnessBreakdown:
+    counts = {
+        H1_TEACHER_CONFLICT: _count_h1(schedule, context),
+        H2_CLASS_CONFLICT: _count_h2(schedule, context),
+        H3_WORKLOAD_DEFICIT: _count_h3(schedule, context),
+        H4_TEACHER_AVAILABILITY: _count_h4(schedule, context),
+        S1_SUBJECT_CONCENTRATION: _count_s1(schedule, context),
+    }
+    hard = (
+        counts[H1_TEACHER_CONFLICT]
+        + counts[H2_CLASS_CONFLICT]
+        + counts[H3_WORKLOAD_DEFICIT]
+        + counts[H4_TEACHER_AVAILABILITY]
+    )
+    soft = counts[S1_SUBJECT_CONCENTRATION]
+    fitness = BASE_SCORE - (PESO_HARD * hard) - (PESO_SOFT * soft)
+    return FitnessBreakdown(fitness=float(fitness), hard=hard, soft=soft, counts=counts)
 
 
 def evaluate(schedule: Schedule, context: GAContext) -> float:
-    """
-    Calcula o fitness de um indivíduo.
-    Quanto maior o score, melhor o indivíduo.
-    """
-    hard = _penalize_hard(schedule, context)
-    soft = _penalize_soft(schedule, context)
-    return BASE_SCORE - (PESO_HARD * hard) - (PESO_SOFT * soft)
-
+    return evaluate_details(schedule, context).fitness
