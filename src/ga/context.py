@@ -24,10 +24,14 @@ class GAContext:
 
         self.subjects_by_class_group: dict[str, list[Subject]] = {}
         for subject in self.subjects:
-            for group in self.class_groups:
-                if subject.id.startswith(group.id + "_"):
-                    self.subjects_by_class_group.setdefault(group.id, []).append(subject)
-                    break
+            group_id = subject.class_group_id
+            if not group_id:
+                for group in self.class_groups:
+                    if subject.id.startswith(group.id + "_"):
+                        group_id = group.id
+                        break
+            if group_id:
+                self.subjects_by_class_group.setdefault(group_id, []).append(subject)
 
         self.ordered_slots: list[TimeSlot] = sorted(self.time_slots, key=self.slot_ordering_key)
 

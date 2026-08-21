@@ -1,14 +1,13 @@
+import json
 import os
-import sys
 
-from data.instance import load_from_excel
-from data.school_hours import SchoolHours
-from data.templates import write_templates
+from domain.entities import ClassGroup, Subject, Teacher, TimeSlot
 from engine import run_ga
 from ga.context import GAContext
 from ga.operators.representation import SLOT_ORDERING_STRATEGIES
 from reporting.printer import print_result
 
+DATA_DIR = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "data"))
 SLOT_ORDERING_STRATEGY = "shift_then_day"
 
 POPULATION_SIZE = 80
@@ -18,29 +17,31 @@ MUTATION_RATE = 0.08
 ELITISM_COUNT = 2
 TOURNAMENT_SIZE = 3
 
-SCHOOL_HOURS = SchoolHours(
-    days=["segunda", "terca", "quarta", "quinta", "sexta"],
-    periods_per_day=5,
-    shift="manha",
-)
+
+def _load(filename: str, model) -> list:
+    path = os.path.join(DATA_DIR, filename)
+    with open(path, encoding="utf-8") as handle:
+        return [model(**item) for item in json.load(handle)]
+
+
+def load_instance() -> tuple[list[Teacher], list[ClassGroup], list[Subject], list[TimeSlot]]:
+    return (
+        _load("teachers.json", Teacher),
+        _load("class_groups.json", ClassGroup),
+        _load("subjects.json", Subject),
+        _load("time_slots.json", TimeSlot),
+    )
 
 
 def main() -> None:
-    if len(sys.argv) > 1 and sys.argv[1] == "--moldes":
-        out = os.path.join(os.path.dirname(__file__), "..", "data", "input")
-        write_templates(out)
-        print(f"Moldes gravados em {os.path.normpath(out)}")
-        return
-
-    print("Carregando planilhas...")
-    teachers, class_groups, subjects, time_slots = load_from_excel(SCHOOL_HOURS)
+    print("Carregando dados...")
+    teachers, class_groups, subjects, time_slots = load_instance()
     print(
         f"  {len(teachers)} professores | "
         f"{len(class_groups)} turmas | "
         f"{len(subjects)} disciplinas | "
         f"{len(time_slots)} time slots"
     )
-    print(f"  Capacidade por turma: {SCHOOL_HOURS.slots_per_class} aulas/semana")
 
     context = GAContext(
         teachers=teachers,
@@ -49,6 +50,15 @@ def main() -> None:
         time_slots=time_slots,
         slot_ordering_key=SLOT_ORDERING_STRATEGIES[SLOT_ORDERING_STRATEGY],
     )
+
+    print(f"\nIniciando AG  |  Estratégia de ordenação: '{SLOT_ORDERING_STRATEGY}'")
+    print(
+        f"  População: {POPULATION_SIZE} | "
+        f"Gerações: {GENERATIONS} | "
+        f"Crossover: {CROSSOVER_RATE} | "
+        f"Mutação: {MUTATION_RATE}"
+    )
+    print()
 
     result = run_ga(
         context=context,
