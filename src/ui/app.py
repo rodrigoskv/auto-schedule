@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import json
 import sys
 import tempfile
 from pathlib import Path
@@ -14,9 +13,9 @@ import pandas as pd
 import streamlit as st
 
 from data.excel_io import load_class_groups, load_subjects, load_teachers
+from data.instance import load_instance
 from data.school_hours import DAY_LABEL, SchoolHours, build_time_slots
 from data.templates import write_templates
-from domain.entities import ClassGroup, Subject, Teacher, TimeSlot
 from engine import run_ga
 from ga.context import GAContext
 from ga.operators.representation import SLOT_ORDERING_STRATEGIES
@@ -53,17 +52,10 @@ def _save_upload(uploaded) -> Path:
     return Path(handle.name)
 
 
-def _load_json(name: str, model):
-    with open(DATA_DIR / name, encoding="utf-8") as handle:
-        return [model(**item) for item in json.load(handle)]
-
-
 def _capacity_table(class_groups, subjects, hours: SchoolHours) -> pd.DataFrame:
     rows = []
     for group in class_groups:
         requested = sum(s.weekly_workload for s in subjects if s.class_group_id == group.id)
-        if requested == 0:
-            requested = sum(s.weekly_workload for s in subjects if s.id.startswith(group.id + "_"))
         rows.append(
             {
                 "Turma": group.name,
@@ -141,12 +133,18 @@ def main() -> None:
     generate_clicked = col2.button("Gerar grade", type="primary", width="stretch")
 
     if load_json_clicked:
+        teachers, groups, subjects, slots = load_instance(DATA_DIR)
+        days = list(dict.fromkeys(slot.day_of_week for slot in slots))
         st.session_state["payload"] = {
-            "hours": hours,
-            "teachers": _load_json("teachers.json", Teacher),
-            "class_groups": _load_json("class_groups.json", ClassGroup),
-            "subjects": _load_json("subjects.json", Subject),
-            "time_slots": _load_json("time_slots.json", TimeSlot),
+            "hours": SchoolHours(
+                days=days,
+                periods_per_day=max((slot.order for slot in slots), default=hours.periods_per_day),
+                shift=slots[0].shift if slots else hours.shift,
+            ),
+            "teachers": teachers,
+            "class_groups": groups,
+            "subjects": subjects,
+            "time_slots": slots,
         }
         st.session_state.pop("result", None)
         st.success("JSON de data/ carregado.")

@@ -1,0 +1,5 @@
+{
+  "school_days": ["segunda", "terca", "quarta", "quinta", "sexta"],
+  "shift": "manha",
+  "lessons_per_day": 5
+}

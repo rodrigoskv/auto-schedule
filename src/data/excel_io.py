@@ -3,10 +3,16 @@ from pathlib import Path
 import pandas as pd
 
 from data.ids import unique_id
-from data.school_hours import SchoolHours
-from domain.entities import ClassGroup, Subject, Teacher
+from data.school_hours import SchoolHours, build_time_slots, hours_from_grade, normalize_shift, parse_days
+from domain.entities import ClassGroup, Subject, Teacher, TimeSlot
 
 DAYS = ["segunda", "terca", "quarta", "quinta", "sexta", "sabado"]
+SHEET_ALIASES = {
+    "grade": ("grade", "horario", "horarios", "school_hours"),
+    "turmas": ("turmas", "classes", "class_groups"),
+    "professores": ("professores", "teachers"),
+    "aulas": ("aulas", "disciplinas", "subjects"),
+}
 
 
 def _yes(value) -> bool:
@@ -28,8 +34,45 @@ def _read(path: str | Path) -> pd.DataFrame:
     return pd.read_excel(path)
 
 
-def load_teachers(path: str | Path, hours: SchoolHours) -> list[Teacher]:
-    df = _read(path)
+def _sheet_name(book: pd.ExcelFile, aliases: tuple[str, ...]) -> str | None:
+    mapping = {str(name).strip().lower(): name for name in book.sheet_names}
+    for alias in aliases:
+        if alias in mapping:
+            return mapping[alias]
+    return None
+
+
+def grade_from_df(df: pd.DataFrame) -> SchoolHours:
+    if df.empty:
+        raise ValueError("Aba Grade está vazia.")
+    row = df.iloc[0]
+    days_col = _col(df, "school_days", "dias_letivos", "dias")
+    shift_col = _col(df, "shift", "turno")
+    lessons_col = _col(df, "lessons_per_day", "aulas_por_dia", "aulas")
+
+    if days_col is not None:
+        days = parse_days(row[days_col])
+    else:
+        days = []
+        for day in DAYS:
+            col = _col(df, day, "terça" if day == "terca" else day)
+            if col and _yes(row[col]):
+                days.append(day)
+        if not days:
+            raise ValueError("Aba Grade precisa de school_days ou colunas de dias.")
+
+    if shift_col is None or lessons_col is None:
+        raise ValueError("Aba Grade precisa de shift e lessons_per_day.")
+
+    payload = {
+        "school_days": days,
+        "shift": row[shift_col],
+        "lessons_per_day": row[lessons_col],
+    }
+    return hours_from_grade(payload)
+
+
+def teachers_from_df(df: pd.DataFrame, hours: SchoolHours) -> list[Teacher]:
     name_col = _col(df, "professor", "nome", "name")
     if name_col is None:
         raise ValueError("Planilha de professores precisa da coluna professor.")
@@ -57,8 +100,7 @@ def load_teachers(path: str | Path, hours: SchoolHours) -> list[Teacher]:
     return teachers
 
 
-def load_class_groups(path: str | Path, hours: SchoolHours) -> list[ClassGroup]:
-    df = _read(path)
+def class_groups_from_df(df: pd.DataFrame, hours: SchoolHours) -> list[ClassGroup]:
     name_col = _col(df, "turma", "nome", "name")
     shift_col = _col(df, "turno", "shift")
     if name_col is None:
@@ -70,24 +112,20 @@ def load_class_groups(path: str | Path, hours: SchoolHours) -> list[ClassGroup]:
         name = str(row[name_col]).strip()
         if not name or name.lower() == "nan":
             continue
-        raw_shift = str(row[shift_col]).strip().lower() if shift_col else hours.shift
-        shift = hours.shift
-        if "tarde" in raw_shift:
-            shift = "tarde"
-        elif "noite" in raw_shift:
-            shift = "noite"
-        elif "manha" in raw_shift or "manhã" in raw_shift:
-            shift = "manha"
+        raw_shift = str(row[shift_col]).strip() if shift_col else hours.shift
+        if not raw_shift or raw_shift.lower() == "nan":
+            shift = hours.shift
+        else:
+            shift = normalize_shift(raw_shift)
         groups.append(ClassGroup(id=unique_id(name, taken), name=name, shift=shift))
     return groups
 
 
-def load_subjects(
-    path: str | Path,
+def subjects_from_df(
+    df: pd.DataFrame,
     teachers: list[Teacher],
     class_groups: list[ClassGroup],
 ) -> list[Subject]:
-    df = _read(path)
     class_col = _col(df, "turma", "class_group")
     subject_col = _col(df, "disciplina", "materia", "subject")
     teacher_col = _col(df, "professor", "teacher")
@@ -123,3 +161,49 @@ def load_subjects(
             )
         )
     return subjects
+
+
+def load_teachers(path: str | Path, hours: SchoolHours) -> list[Teacher]:
+    return teachers_from_df(_read(path), hours)
+
+
+def load_class_groups(path: str | Path, hours: SchoolHours) -> list[ClassGroup]:
+    return class_groups_from_df(_read(path), hours)
+
+
+def load_subjects(
+    path: str | Path,
+    teachers: list[Teacher],
+    class_groups: list[ClassGroup],
+) -> list[Subject]:
+    return subjects_from_df(_read(path), teachers, class_groups)
+
+
+def load_grade(path: str | Path) -> SchoolHours:
+    return grade_from_df(_read(path))
+
+
+def load_from_workbook(
+    path: str | Path,
+) -> tuple[list[Teacher], list[ClassGroup], list[Subject], list[TimeSlot]]:
+    path = Path(path)
+    book = pd.ExcelFile(path)
+    missing = []
+    frames: dict[str, pd.DataFrame] = {}
+    for key, aliases in SHEET_ALIASES.items():
+        name = _sheet_name(book, aliases)
+        if name is None:
+            missing.append(key.capitalize())
+        else:
+            frames[key] = pd.read_excel(book, sheet_name=name)
+    if missing:
+        raise ValueError(
+            "Planilha do molde precisa das abas Grade, Turmas, Professores e Aulas. "
+            f"Faltando: {', '.join(missing)}."
+        )
+
+    hours = grade_from_df(frames["grade"])
+    teachers = teachers_from_df(frames["professores"], hours)
+    class_groups = class_groups_from_df(frames["turmas"], hours)
+    subjects = subjects_from_df(frames["aulas"], teachers, class_groups)
+    return teachers, class_groups, subjects, build_time_slots(hours)

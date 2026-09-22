@@ -27,7 +27,7 @@ class Subject:
     name: str
     weekly_workload: int
     teacher_id: str
-    class_group_id: str | None = None
+    class_group_id: str
 
 
 @dataclass

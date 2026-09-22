@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
 
+from data.ids import slugify
 from domain.entities import TimeSlot
 
 DAY_LABEL = {
@@ -21,6 +22,43 @@ class SchoolHours:
     @property
     def slots_per_class(self) -> int:
         return len(self.days) * self.periods_per_day
+
+
+def normalize_day(value: str) -> str:
+    return slugify(str(value))
+
+
+def normalize_shift(value: str) -> str:
+    return slugify(str(value))
+
+
+def parse_days(value) -> list[str]:
+    if isinstance(value, (list, tuple)):
+        items = value
+    else:
+        items = [part.strip() for part in str(value).replace(";", ",").split(",") if part.strip()]
+    days = [normalize_day(item) for item in items if str(item).strip()]
+    if not days:
+        raise ValueError("school_days não pode ser vazio.")
+    return days
+
+
+def hours_from_grade(data: dict) -> SchoolHours:
+    if not isinstance(data, dict):
+        raise ValueError("grade precisa ser um objeto com school_days, shift e lessons_per_day.")
+    days = data.get("school_days")
+    shift = data.get("shift")
+    lessons = data.get("lessons_per_day")
+    if not days or shift in (None, "") or lessons is None:
+        raise ValueError("grade precisa de school_days, shift e lessons_per_day.")
+    periods = int(lessons)
+    if periods < 1:
+        raise ValueError("lessons_per_day deve ser >= 1.")
+    return SchoolHours(
+        days=parse_days(days),
+        periods_per_day=periods,
+        shift=normalize_shift(str(shift)),
+    )
 
 
 def build_time_slots(hours: SchoolHours) -> list[TimeSlot]:

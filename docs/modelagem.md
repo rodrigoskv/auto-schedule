@@ -43,12 +43,16 @@ Campos principais:
 >- `name`
 >- `weekly_workload`
 >- `teacher_id`
+>- `class_group_id`
 
 A carga horária semanal define quantas vezes a disciplina deve aparecer na semana.
+A turma é sempre o `class_group_id` informado; o prefixo do `id` não é usado para descobrir a turma.
 
 ### Período
 
 Representa um horário disponível para aula.
+
+Os períodos são gerados a partir da grade da escola (`school_days`, `shift`, `lessons_per_day`).
 
 Campos principais:
 
