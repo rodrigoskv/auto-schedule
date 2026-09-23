@@ -1,10 +1,6 @@
-from domain.entities import Schedule
-from ga.context import GAContext
-from ga.fitness import FitnessBreakdown, evaluate_details
+"""Formata a contagem H1–H4 e S1 para o relatório final."""
 
-
-def summarize_violations(schedule: Schedule, context: GAContext) -> FitnessBreakdown:
-    return evaluate_details(schedule, context)
+from ga.fitness import FitnessBreakdown
 
 
 def format_violations(breakdown: FitnessBreakdown) -> str:

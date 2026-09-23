@@ -1,6 +1,8 @@
+"""Imprime o melhor Schedule e o resumo de violações."""
+
 from domain.entities import Schedule
 from ga.context import GAContext
-from engine import GAResult
+from ga.engine import GAResult
 from reporting.violations import format_violations
 
 

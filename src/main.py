@@ -1,11 +1,14 @@
+"""Ponto de entrada: carrega a instância, valida e roda o AG."""
+
 import argparse
 import sys
 from pathlib import Path
 
-from data.instance import load_instance, validate_instance
+from data.instance import load_instance
 from data.templates import write_templates
-from engine import run_ga
+from data.validate import validate_instance
 from ga.context import GAContext
+from ga.engine import run_ga
 from ga.operators.representation import SLOT_ORDERING_STRATEGIES
 from reporting.printer import print_result
 

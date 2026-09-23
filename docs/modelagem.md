@@ -41,12 +41,12 @@ Campos principais:
 
 >- `id`
 >- `name`
->- `weekly_workload`
 >- `teacher_id`
 >- `class_group_id`
+>- `weekly_workload`
 
 A carga horária semanal define quantas vezes a disciplina deve aparecer na semana.
-A turma é sempre o `class_group_id` informado; o prefixo do `id` não é usado para descobrir a turma.
+A turma é o `class_group_id` informado.
 
 ### Período
 

@@ -1,3 +1,5 @@
+"""População inicial: um Schedule por indivíduo, aulas sorteadas nos slots da turma."""
+
 import random
 
 from domain.entities import Lesson, Schedule

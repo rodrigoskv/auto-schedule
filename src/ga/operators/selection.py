@@ -1,6 +1,9 @@
+"""Seleção por torneio."""
+
 import random
 
 from domain.entities import Schedule
+
 
 def tournament_selection(
     population: list[Schedule],

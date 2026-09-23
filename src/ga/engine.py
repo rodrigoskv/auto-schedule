@@ -1,6 +1,9 @@
+"""Uma geração do AG: fitness → elitismo → selection → crossover → mutation → repair."""
+
 from dataclasses import dataclass, field
 from time import perf_counter
 
+from domain.constraints import BASE_SCORE
 from domain.entities import Schedule
 from ga.context import GAContext
 from ga.fitness import FitnessBreakdown, evaluate_details
@@ -72,7 +75,7 @@ def run_ga(
                 f"H3={counts['H3']} H4={counts['H4']} S1={counts['S1']}"
             )
 
-        if best_fitness >= 100_000:
+        if best_fitness >= BASE_SCORE:
             if verbose:
                 print(f"\n  Fitness máximo atingido na geração {generation}.")
             break

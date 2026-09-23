@@ -1,3 +1,5 @@
+"""Instância indexada para fitness e operadores. Agrupa Subject pelo class_group_id informado."""
+
 from dataclasses import dataclass, field
 
 from domain.entities import ClassGroup, Subject, Teacher, TimeSlot
@@ -6,7 +8,7 @@ from ga.operators.representation import SlotOrderingKey, order_by_day_shift_orde
 
 @dataclass
 class GAContext:
-    """Centraliza os dados usados pelos operadores e pela aptidão"""
+    """Dados da escola usados pelo AG. Subject entra na turma pelo class_group_id."""
 
     teachers: list[Teacher]
     class_groups: list[ClassGroup]

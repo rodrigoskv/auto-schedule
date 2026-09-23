@@ -1,5 +1,16 @@
+"""Carrega a instância escolar.
+
+Formatos aceitos:
+- pasta JSON: teachers.json, class_groups.json, subjects.json, grade.json
+- planilha com abas Grade, Turmas, Professores, Aulas
+- trio turmas.xlsx + professores.xlsx + aulas.xlsx, com grade.json
+
+Saída: Teacher, ClassGroup, Subject e TimeSlot (este último gerado pela grade).
+"""
+
 import json
 from pathlib import Path
+
 import pandas as pd
 
 from data.excel_io import load_class_groups, load_from_workbook, load_grade, load_subjects, load_teachers
@@ -11,23 +22,6 @@ JSON_FILES = ("teachers.json", "class_groups.json", "subjects.json", "grade.json
 TRIO_TEACHERS = ("professores.xlsx", "molde-professores.xlsx", "teachers.xlsx")
 TRIO_CLASSES = ("turmas.xlsx", "molde-turmas.xlsx", "class_groups.xlsx")
 TRIO_SUBJECTS = ("aulas.xlsx", "molde-aulas.xlsx", "subjects.xlsx")
-
-
-def load_from_excel(
-    hours: SchoolHours,
-    teachers_path: str | Path | None = None,
-    classes_path: str | Path | None = None,
-    subjects_path: str | Path | None = None,
-) -> tuple[list[Teacher], list[ClassGroup], list[Subject], list[TimeSlot]]:
-    teachers_path = Path(teachers_path or INPUT_DIR / "professores.xlsx")
-    classes_path = Path(classes_path or INPUT_DIR / "turmas.xlsx")
-    subjects_path = Path(subjects_path or INPUT_DIR / "aulas.xlsx")
-
-    teachers = load_teachers(teachers_path, hours)
-    class_groups = load_class_groups(classes_path, hours)
-    subjects = load_subjects(subjects_path, teachers, class_groups)
-    time_slots = build_time_slots(hours)
-    return teachers, class_groups, subjects, time_slots
 
 
 def load_instance(
@@ -50,70 +44,21 @@ def load_instance(
     return _load_trio(path)
 
 
-def validate_instance(
-    teachers: list[Teacher],
-    class_groups: list[ClassGroup],
-    subjects: list[Subject],
-    time_slots: list[TimeSlot],
-) -> tuple[list[str], list[str]]:
-    errors: list[str] = []
-    warnings: list[str] = []
+def load_from_excel(
+    hours: SchoolHours,
+    teachers_path: str | Path | None = None,
+    classes_path: str | Path | None = None,
+    subjects_path: str | Path | None = None,
+) -> tuple[list[Teacher], list[ClassGroup], list[Subject], list[TimeSlot]]:
+    teachers_path = Path(teachers_path or INPUT_DIR / "professores.xlsx")
+    classes_path = Path(classes_path or INPUT_DIR / "turmas.xlsx")
+    subjects_path = Path(subjects_path or INPUT_DIR / "aulas.xlsx")
 
-    if not teachers:
-        errors.append("Nenhum professor na instância.")
-    if not class_groups:
-        errors.append("Nenhuma turma na instância.")
-    if not subjects:
-        errors.append("Nenhuma disciplina na instância.")
-    if not time_slots:
-        errors.append("Nenhum horário gerado pela grade.")
-
-    _reject_duplicates(errors, [item.id for item in teachers], "Professor")
-    _reject_duplicates(errors, [item.id for item in class_groups], "Turma")
-    _reject_duplicates(errors, [item.id for item in subjects], "Disciplina")
-
-    teacher_ids = {item.id for item in teachers}
-    group_ids = {item.id for item in class_groups}
-    slots_by_shift: dict[str, int] = {}
-    for slot in time_slots:
-        slots_by_shift[slot.shift] = slots_by_shift.get(slot.shift, 0) + 1
-
-    for subject in subjects:
-        if not subject.class_group_id:
-            errors.append(f"Disciplina '{subject.id}' sem class_group_id.")
-        elif subject.class_group_id not in group_ids:
-            errors.append(
-                f"Disciplina '{subject.id}': turma '{subject.class_group_id}' não existe."
-            )
-        if subject.teacher_id not in teacher_ids:
-            errors.append(
-                f"Disciplina '{subject.id}': professor '{subject.teacher_id}' não existe."
-            )
-        if subject.weekly_workload < 1:
-            errors.append(
-                f"Disciplina '{subject.id}': weekly_workload inválido ({subject.weekly_workload})."
-            )
-
-    for group in class_groups:
-        n_slots = slots_by_shift.get(group.shift, 0) if group.shift else len(time_slots)
-        if group.shift and n_slots == 0:
-            errors.append(f"Turma '{group.name}' ({group.id}): turno '{group.shift}' sem slots na grade.")
-            continue
-        load = sum(item.weekly_workload for item in subjects if item.class_group_id == group.id)
-        if load > n_slots:
-            warnings.append(
-                f"Turma '{group.name}' ({group.id}): carga {load} > {n_slots} slots (H3 estrutural)."
-            )
-
-    return errors, warnings
-
-
-def _reject_duplicates(errors: list[str], ids: list[str], label: str) -> None:
-    seen: set[str] = set()
-    for item_id in ids:
-        if item_id in seen:
-            errors.append(f"{label} duplicado: '{item_id}'.")
-        seen.add(item_id)
+    teachers = load_teachers(teachers_path, hours)
+    class_groups = load_class_groups(classes_path, hours)
+    subjects = load_subjects(subjects_path, teachers, class_groups)
+    time_slots = build_time_slots(hours)
+    return teachers, class_groups, subjects, time_slots
 
 
 def _read_json(path: Path):

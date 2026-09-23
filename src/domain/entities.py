@@ -1,3 +1,10 @@
+"""Representação do problema.
+
+Teacher, ClassGroup, Subject e TimeSlot descrevem a escola.
+Lesson é uma aula alocada (o gene).
+Schedule é a grade completa (o indivíduo); a lista de Lesson é o cromossomo.
+"""
+
 from dataclasses import dataclass, field
 
 
@@ -23,11 +30,13 @@ class ClassGroup:
 
 @dataclass
 class Subject:
+    """Oferta de uma disciplina para uma turma, com professor e carga semanal."""
+
     id: str
     name: str
-    weekly_workload: int
     teacher_id: str
     class_group_id: str
+    weekly_workload: int
 
 
 @dataclass
@@ -118,30 +127,3 @@ class Schedule:
             for lesson in self.lessons
             if lesson.class_group_id == class_group_id and lesson.time_slot_id in valid_time_slot_ids
         ]
-
-    def matrix_view(
-        self,
-        time_slots: list[TimeSlot],
-        class_groups: list[ClassGroup],
-    ) -> dict[str, dict[str, dict[str, dict[str, list[Lesson]]]]]:
-        matrix: dict[str, dict[str, dict[str, dict[str, list[Lesson]]]]] = {}
-
-        ordered_time_slots = sorted(
-            time_slots,
-            key=lambda time_slot: (time_slot.day_of_week, time_slot.shift, time_slot.order),
-        )
-
-        for time_slot in ordered_time_slots:
-            matrix.setdefault(time_slot.day_of_week, {})
-            matrix[time_slot.day_of_week].setdefault(time_slot.shift, {})
-            matrix[time_slot.day_of_week][time_slot.shift][time_slot.id] = {}
-
-            for class_group in class_groups:
-                matrix[time_slot.day_of_week][time_slot.shift][time_slot.id][class_group.id] = (
-                    self.get_cell_lessons(
-                        time_slot_id=time_slot.id,
-                        class_group_id=class_group.id,
-                    )
-                )
-
-        return matrix

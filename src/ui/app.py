@@ -16,7 +16,8 @@ from data.excel_io import load_class_groups, load_subjects, load_teachers
 from data.instance import load_instance
 from data.school_hours import DAY_LABEL, SchoolHours, build_time_slots
 from data.templates import write_templates
-from engine import run_ga
+from data.validate import validate_instance
+from ga.engine import run_ga
 from ga.context import GAContext
 from ga.operators.representation import SLOT_ORDERING_STRATEGIES
 
@@ -50,6 +51,24 @@ def _save_upload(uploaded) -> Path:
     handle.write(uploaded.getbuffer())
     handle.close()
     return Path(handle.name)
+
+
+def _store_payload(teachers, groups, subjects, slots, hours: SchoolHours) -> bool:
+    errors, warnings = validate_instance(teachers, groups, subjects, slots)
+    for warning in warnings:
+        st.warning(warning)
+    if errors:
+        for error in errors:
+            st.error(error)
+        return False
+    st.session_state["payload"] = {
+        "hours": hours,
+        "teachers": teachers,
+        "class_groups": groups,
+        "subjects": subjects,
+        "time_slots": slots,
+    }
+    return True
 
 
 def _capacity_table(class_groups, subjects, hours: SchoolHours) -> pd.DataFrame:
@@ -135,32 +154,27 @@ def main() -> None:
     if load_json_clicked:
         teachers, groups, subjects, slots = load_instance(DATA_DIR)
         days = list(dict.fromkeys(slot.day_of_week for slot in slots))
-        st.session_state["payload"] = {
-            "hours": SchoolHours(
+        ok = _store_payload(
+            teachers,
+            groups,
+            subjects,
+            slots,
+            SchoolHours(
                 days=days,
                 periods_per_day=max((slot.order for slot in slots), default=hours.periods_per_day),
                 shift=slots[0].shift if slots else hours.shift,
             ),
-            "teachers": teachers,
-            "class_groups": groups,
-            "subjects": subjects,
-            "time_slots": slots,
-        }
-        st.session_state.pop("result", None)
-        st.success("JSON de data/ carregado.")
+        )
+        if ok:
+            st.session_state.pop("result", None)
+            st.success("JSON de data/ carregado.")
 
     if teachers_file and classes_file and subjects_file:
         try:
             teachers = load_teachers(_save_upload(teachers_file), hours)
             groups = load_class_groups(_save_upload(classes_file), hours)
             subjects = load_subjects(_save_upload(subjects_file), teachers, groups)
-            st.session_state["payload"] = {
-                "hours": hours,
-                "teachers": teachers,
-                "class_groups": groups,
-                "subjects": subjects,
-                "time_slots": build_time_slots(hours),
-            }
+            _store_payload(teachers, groups, subjects, build_time_slots(hours), hours)
         except Exception as exc:
             st.error(str(exc))
 

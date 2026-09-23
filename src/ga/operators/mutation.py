@@ -1,3 +1,5 @@
+"""Mutação: move uma aula para um slot livre ou troca duas aulas da mesma turma."""
+
 import copy
 import random
 

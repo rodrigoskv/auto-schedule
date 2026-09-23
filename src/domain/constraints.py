@@ -1,3 +1,5 @@
+"""Pesos e códigos das restrições (H1–H4, S1)."""
+
 BASE_SCORE = 100_000
 PESO_HARD = 1_000
 PESO_SOFT = 10

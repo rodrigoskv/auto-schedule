@@ -1,3 +1,5 @@
+"""Repair: aloca aulas sem slot, corrige H4 (disponibilidade) e H1 (choque de professor)."""
+
 import copy
 import random
 

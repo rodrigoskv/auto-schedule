@@ -1,3 +1,5 @@
+"""Grade da escola (dias, turno, aulas por dia) → lista de TimeSlot."""
+
 from dataclasses import dataclass, field
 
 from data.ids import slugify

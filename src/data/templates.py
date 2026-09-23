@@ -1,3 +1,5 @@
+"""Planilhas-modelo e grade.json de exemplo."""
+
 import json
 from pathlib import Path
 

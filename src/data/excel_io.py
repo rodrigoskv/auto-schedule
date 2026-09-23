@@ -1,3 +1,5 @@
+"""Lê planilhas e monta Teacher, ClassGroup, Subject e a grade (TimeSlot)."""
+
 from pathlib import Path
 
 import pandas as pd
@@ -155,9 +157,9 @@ def subjects_from_df(
             Subject(
                 id=unique_id(f"{group.id}_{subject_name}_{teacher.id}", taken),
                 name=subject_name,
-                weekly_workload=workload,
                 teacher_id=teacher.id,
                 class_group_id=group.id,
+                weekly_workload=workload,
             )
         )
     return subjects

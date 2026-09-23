@@ -1,5 +1,10 @@
-"""
-Fitness = BASE - (PESO_HARD * total_hard) - (PESO_SOFT * total_soft)
+"""Fitness = BASE - (PESO_HARD * hard) - (PESO_SOFT * soft).
+
+H1 professor em duas turmas no mesmo slot
+H2 turma com duas aulas no mesmo slot
+H3 carga semanal da disciplina incompleta
+H4 professor alocado fora da disponibilidade
+S1 mais de duas aulas da mesma disciplina no mesmo dia
 """
 
 from collections import Counter

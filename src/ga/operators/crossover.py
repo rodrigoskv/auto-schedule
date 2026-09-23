@@ -1,3 +1,5 @@
+"""Crossover de dois pontos por turma, restaurando a carga semanal."""
+
 import copy
 import random
 from collections import Counter
