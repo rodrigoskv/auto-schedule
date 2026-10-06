@@ -1,64 +1,42 @@
-"""Carrega a instância escolar.
+"""Carrega Teacher, ClassGroup, Subject e TimeSlot.
 
-Formatos aceitos:
-- pasta JSON: teachers.json, class_groups.json, subjects.json, grade.json
-- planilha com abas Grade, Turmas, Professores, Aulas
-- trio turmas.xlsx + professores.xlsx + aulas.xlsx, com grade.json
-
-Saída: Teacher, ClassGroup, Subject e TimeSlot (este último gerado pela grade).
+Aceita pasta JSON, molde.xlsx (abas Grade/Turmas/Professores/Aulas)
+ou o trio turmas.xlsx + professores.xlsx + aulas.xlsx com grade.json.
 """
 
 import json
 from pathlib import Path
 
-import pandas as pd
-
 from data.excel_io import load_class_groups, load_from_workbook, load_grade, load_subjects, load_teachers
-from data.school_hours import SchoolHours, build_time_slots, hours_from_grade
-from domain.entities import ClassGroup, Subject, Teacher, TimeSlot
+from data.school_hours import build_time_slots, hours_from_grade
+from domain.entities import ClassGroup, SchoolInstance, Subject, Teacher
 
-INPUT_DIR = Path(__file__).resolve().parents[2] / "data" / "input"
 JSON_FILES = ("teachers.json", "class_groups.json", "subjects.json", "grade.json")
-TRIO_TEACHERS = ("professores.xlsx", "molde-professores.xlsx", "teachers.xlsx")
-TRIO_CLASSES = ("turmas.xlsx", "molde-turmas.xlsx", "class_groups.xlsx")
-TRIO_SUBJECTS = ("aulas.xlsx", "molde-aulas.xlsx", "subjects.xlsx")
 
 
-def load_instance(
-    entrada: str | Path,
-) -> tuple[list[Teacher], list[ClassGroup], list[Subject], list[TimeSlot]]:
+def load_instance(entrada: str | Path) -> SchoolInstance:
+    """Detecta o formato da entrada e devolve a escola em memória."""
     path = Path(entrada)
     if not path.exists():
         raise FileNotFoundError(f"Entrada não encontrada: {path}")
+
+    # 1) um único .xlsx com as 4 abas
     if path.is_file():
         if path.suffix.lower() not in {".xlsx", ".xls"}:
-            raise ValueError(
-                "Arquivo de entrada deve ser uma planilha .xlsx com as abas Grade, Turmas, Professores e Aulas."
-            )
+            raise ValueError("Arquivo de entrada deve ser um .xlsx com as abas Grade, Turmas, Professores e Aulas.")
         return load_from_workbook(path)
-    if _has_json(path):
-        return _load_json_dir(path)
-    workbook = _find_workbook(path)
-    if workbook is not None:
-        return load_from_workbook(workbook)
+
+    # 2) pasta JSON (teachers, class_groups, subjects, grade)
+    if all((path / name).is_file() for name in JSON_FILES):
+        return _load_json(path)
+
+    # 3) pasta com molde.xlsx
+    molde = path / "molde.xlsx"
+    if molde.is_file():
+        return load_from_workbook(molde)
+
+    # 4) trio de planilhas + grade.json
     return _load_trio(path)
-
-
-def load_from_excel(
-    hours: SchoolHours,
-    teachers_path: str | Path | None = None,
-    classes_path: str | Path | None = None,
-    subjects_path: str | Path | None = None,
-) -> tuple[list[Teacher], list[ClassGroup], list[Subject], list[TimeSlot]]:
-    teachers_path = Path(teachers_path or INPUT_DIR / "professores.xlsx")
-    classes_path = Path(classes_path or INPUT_DIR / "turmas.xlsx")
-    subjects_path = Path(subjects_path or INPUT_DIR / "aulas.xlsx")
-
-    teachers = load_teachers(teachers_path, hours)
-    class_groups = load_class_groups(classes_path, hours)
-    subjects = load_subjects(subjects_path, teachers, class_groups)
-    time_slots = build_time_slots(hours)
-    return teachers, class_groups, subjects, time_slots
 
 
 def _read_json(path: Path):
@@ -79,75 +57,50 @@ def _load_models(path: Path, model):
     return items
 
 
-def _has_json(folder: Path) -> bool:
-    return all((folder / name).is_file() for name in JSON_FILES)
-
-
-def _load_json_dir(
-    folder: Path,
-) -> tuple[list[Teacher], list[ClassGroup], list[Subject], list[TimeSlot]]:
+def _load_json(folder: Path) -> SchoolInstance:
     hours = hours_from_grade(_read_json(folder / "grade.json"))
-    teachers = _load_models(folder / "teachers.json", Teacher)
-    class_groups = _load_models(folder / "class_groups.json", ClassGroup)
-    subjects = _load_models(folder / "subjects.json", Subject)
-    return teachers, class_groups, subjects, build_time_slots(hours)
-
-
-def _files(folder: Path) -> dict[str, Path]:
-    return {path.name.lower(): path for path in folder.iterdir() if path.is_file()}
-
-
-def _find(folder: Path, names: tuple[str, ...]) -> Path | None:
-    files = _files(folder)
-    for name in names:
-        key = name.lower()
-        if key in files:
-            return files[key]
-        csv_key = Path(name).with_suffix(".csv").name.lower()
-        if csv_key in files:
-            return files[csv_key]
-    return None
-
-
-def _find_workbook(folder: Path) -> Path | None:
-    preferred = _find(folder, ("molde.xlsx", "entrada.xlsx"))
-    if preferred is not None:
-        return preferred
-
-    for path in sorted(folder.glob("*.xlsx")):
-        try:
-            book = pd.ExcelFile(path)
-            names = {str(sheet).strip().lower() for sheet in book.sheet_names}
-            if "grade" in names and "turmas" in names and "professores" in names and "aulas" in names:
-                return path
-        except Exception:
-            continue
-    return None
-
-
-def _hours_from_folder(folder: Path) -> SchoolHours:
-    grade_json = folder / "grade.json"
-    if grade_json.is_file():
-        return hours_from_grade(_read_json(grade_json))
-    grade_sheet = _find(folder, ("grade.xlsx", "molde-grade.xlsx"))
-    if grade_sheet is not None:
-        return load_grade(grade_sheet)
-    raise ValueError(
-        "Pasta sem grade.json (ou grade.xlsx). Informe school_days, shift e lessons_per_day."
+    return SchoolInstance(
+        teachers=_load_models(folder / "teachers.json", Teacher),
+        class_groups=_load_models(folder / "class_groups.json", ClassGroup),
+        subjects=_load_models(folder / "subjects.json", Subject),
+        time_slots=build_time_slots(hours),
     )
 
 
-def _load_trio(
-    folder: Path,
-) -> tuple[list[Teacher], list[ClassGroup], list[Subject], list[TimeSlot]]:
-    teachers_path = _find(folder, TRIO_TEACHERS)
-    classes_path = _find(folder, TRIO_CLASSES)
-    subjects_path = _find(folder, TRIO_SUBJECTS)
+def _file(folder: Path, *names: str) -> Path | None:
+    for name in names:
+        path = folder / name
+        if path.is_file():
+            return path
+    return None
+
+
+def _hours(folder: Path):
+    grade_json = folder / "grade.json"
+    if grade_json.is_file():
+        return hours_from_grade(_read_json(grade_json))
+    grade_xlsx = _file(folder, "grade.xlsx")
+    if grade_xlsx is not None:
+        return load_grade(grade_xlsx)
+    raise ValueError("Pasta sem grade.json. Informe school_days, shift e lessons_per_day.")
+
+
+def _load_trio(folder: Path) -> SchoolInstance:
+    teachers_path = _file(folder, "professores.xlsx", "professores.csv")
+    classes_path = _file(folder, "turmas.xlsx", "turmas.csv")
+    subjects_path = _file(folder, "aulas.xlsx", "aulas.csv")
     if not teachers_path or not classes_path or not subjects_path:
         raise ValueError(
-            "Entrada deve ser pasta JSON (teachers.json, class_groups.json, subjects.json, grade.json), "
-            "planilha com abas Grade/Turmas/Professores/Aulas, "
+            "Entrada deve ser pasta JSON, molde.xlsx "
             "ou trio turmas.xlsx + professores.xlsx + aulas.xlsx com grade.json."
         )
-    hours = _hours_from_folder(folder)
-    return load_from_excel(hours, teachers_path, classes_path, subjects_path)
+    hours = _hours(folder)
+    teachers = load_teachers(teachers_path, hours)
+    class_groups = load_class_groups(classes_path, hours)
+    subjects = load_subjects(subjects_path, teachers, class_groups)
+    return SchoolInstance(
+        teachers=teachers,
+        class_groups=class_groups,
+        subjects=subjects,
+        time_slots=build_time_slots(hours),
+    )

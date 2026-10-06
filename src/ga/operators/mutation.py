@@ -1,10 +1,25 @@
-"""Mutação: move uma aula para um slot livre ou troca duas aulas da mesma turma."""
+"""Mutação, turma a turma.
+
+Com probabilidade mutation_rate, uma aula:
+    - vai para um slot livre da turma, ou
+    - troca de horário com outra aula da mesma turma
+"""
 
 import copy
 import random
 
 from domain.entities import Schedule
 from ga.context import GAContext
+
+MOVE_TO_FREE_CHANCE = 0.35
+
+
+def _move_to_free_slot(lesson, free_slots: list[str]) -> None:
+    target = random.choice(free_slots)
+    if lesson.time_slot_id:
+        free_slots.append(lesson.time_slot_id)
+    lesson.time_slot_id = target
+    free_slots.remove(target)
 
 
 def mutate(
@@ -31,12 +46,9 @@ def mutate(
                 continue
 
             lesson = mutated.lessons[index]
-            if free_slots and (not lesson.time_slot_id or random.random() < 0.35):
-                target = random.choice(free_slots)
-                if lesson.time_slot_id:
-                    free_slots.append(lesson.time_slot_id)
-                lesson.time_slot_id = target
-                free_slots.remove(target)
+            can_move = free_slots and (not lesson.time_slot_id or random.random() < MOVE_TO_FREE_CHANCE)
+            if can_move:
+                _move_to_free_slot(lesson, free_slots)
                 continue
 
             other_index = random.choice([item for item in indices if item != index])

@@ -1,4 +1,10 @@
-"""Crossover de dois pontos por turma, restaurando a carga semanal."""
+"""Cruzamento de dois pontos, turma a turma.
+
+Para cada turma:
+    1. mistura as aulas dos dois pais (dois pontos)
+    2. restaura a carga semanal (quantas aulas de cada disciplina)
+    3. coloca cada aula num slot diferente da turma
+"""
 
 import copy
 import random
@@ -8,7 +14,7 @@ from domain.entities import Lesson, Schedule
 from ga.context import GAContext
 
 
-def _crossover_for_class_group(lessons1: list[Lesson], lessons2: list[Lesson]) -> list[Lesson]:
+def _two_point_mix(lessons1: list[Lesson], lessons2: list[Lesson]) -> list[Lesson]:
     size = max(len(lessons1), len(lessons2))
     if size < 2:
         return copy.deepcopy(lessons1) if lessons1 else copy.deepcopy(lessons2)
@@ -94,12 +100,12 @@ def crossover(
         lessons1 = parent1.get_lessons_for_class_group(group.id)
         lessons2 = parent2.get_lessons_for_class_group(group.id)
 
-        raw1 = _restore_workload(_crossover_for_class_group(lessons1, lessons2), group.id, context)
-        raw2 = _restore_workload(_crossover_for_class_group(lessons2, lessons1), group.id, context)
+        mixed1 = _two_point_mix(lessons1, lessons2)
+        mixed2 = _two_point_mix(lessons2, lessons1)
 
-        for lesson in _assign_unique_slots(raw1, context, group.id):
+        for lesson in _assign_unique_slots(_restore_workload(mixed1, group.id, context), context, group.id):
             child1.add_lesson(lesson)
-        for lesson in _assign_unique_slots(raw2, context, group.id):
+        for lesson in _assign_unique_slots(_restore_workload(mixed2, group.id, context), context, group.id):
             child2.add_lesson(lesson)
 
     return child1, child2

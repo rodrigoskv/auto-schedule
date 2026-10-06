@@ -1,10 +1,12 @@
-"""Fitness = BASE - (PESO_HARD * hard) - (PESO_SOFT * soft).
+"""Quanto maior o fitness, melhor o horário.
 
-H1 professor em duas turmas no mesmo slot
-H2 turma com duas aulas no mesmo slot
-H3 carga semanal da disciplina incompleta
-H4 professor alocado fora da disponibilidade
-S1 mais de duas aulas da mesma disciplina no mesmo dia
+    fitness = BASE - 1000 * violações rígidas - 10 * violações flexíveis
+
+H1  professor em duas turmas no mesmo horário
+H2  turma com duas aulas no mesmo horário
+H3  disciplina com menos aulas do que a carga semanal
+H4  professor alocado fora da disponibilidade
+S1  mais de 2 aulas da mesma disciplina no mesmo dia (flexível)
 """
 
 from collections import Counter
@@ -33,6 +35,7 @@ class FitnessBreakdown:
 
 
 def _count_h1(schedule: Schedule, context: GAContext) -> int:
+    """Professor em mais de uma turma no mesmo slot."""
     violations = 0
     for slot in context.time_slots:
         seen: dict[str, int] = {}
@@ -45,6 +48,7 @@ def _count_h1(schedule: Schedule, context: GAContext) -> int:
 
 
 def _count_h2(schedule: Schedule, context: GAContext) -> int:
+    """Turma com mais de uma aula no mesmo slot."""
     violations = 0
     for group in context.class_groups:
         for slot in context.slots_for_class(group.id):
@@ -55,6 +59,7 @@ def _count_h2(schedule: Schedule, context: GAContext) -> int:
 
 
 def _count_h3(schedule: Schedule, context: GAContext) -> int:
+    """Aulas alocadas a menos da carga semanal da disciplina."""
     violations = 0
     for subject in context.subjects:
         allocated = sum(
@@ -68,6 +73,7 @@ def _count_h3(schedule: Schedule, context: GAContext) -> int:
 
 
 def _count_h4(schedule: Schedule, context: GAContext) -> int:
+    """Aula em um dia/turno em que o professor não está disponível."""
     violations = 0
     for lesson in schedule.lessons:
         if not lesson.time_slot_id:
@@ -78,6 +84,7 @@ def _count_h4(schedule: Schedule, context: GAContext) -> int:
 
 
 def _count_s1(schedule: Schedule, context: GAContext) -> int:
+    """Mais de duas aulas da mesma disciplina no mesmo dia/turno."""
     violations = 0
     days = {slot.day_of_week for slot in context.time_slots}
     shifts = {slot.shift for slot in context.time_slots}

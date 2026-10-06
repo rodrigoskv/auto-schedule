@@ -1,4 +1,4 @@
-"""Grade da escola (dias, turno, aulas por dia) → lista de TimeSlot."""
+"""Grade da escola → TimeSlot."""
 
 from dataclasses import dataclass, field
 
@@ -13,6 +13,8 @@ DAY_LABEL = {
     "sexta": "Sexta",
     "sabado": "Sábado",
 }
+SHIFT_LABEL = {"manha": "Manhã", "tarde": "Tarde", "noite": "Noite"}
+DAYS = list(DAY_LABEL)
 
 
 @dataclass
@@ -47,7 +49,7 @@ def parse_days(value) -> list[str]:
 
 def hours_from_grade(data: dict) -> SchoolHours:
     if not isinstance(data, dict):
-        raise ValueError("grade precisa ser um objeto com school_days, shift e lessons_per_day.")
+        raise ValueError("grade precisa de school_days, shift e lessons_per_day.")
     days = data.get("school_days")
     shift = data.get("shift")
     lessons = data.get("lessons_per_day")
@@ -60,6 +62,15 @@ def hours_from_grade(data: dict) -> SchoolHours:
         days=parse_days(days),
         periods_per_day=periods,
         shift=normalize_shift(str(shift)),
+    )
+
+
+def hours_from_slots(slots: list[TimeSlot]) -> SchoolHours:
+    days = list(dict.fromkeys(slot.day_of_week for slot in slots))
+    return SchoolHours(
+        days=days,
+        periods_per_day=max((slot.order for slot in slots), default=1),
+        shift=slots[0].shift if slots else "manha",
     )
 
 

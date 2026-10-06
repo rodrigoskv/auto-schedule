@@ -5,10 +5,9 @@ from pathlib import Path
 import pandas as pd
 
 from data.ids import unique_id
-from data.school_hours import SchoolHours, build_time_slots, hours_from_grade, normalize_shift, parse_days
-from domain.entities import ClassGroup, Subject, Teacher, TimeSlot
+from data.school_hours import DAYS, SchoolHours, build_time_slots, hours_from_grade, normalize_shift, parse_days
+from domain.entities import ClassGroup, SchoolInstance, Subject, Teacher, TimeSlot
 
-DAYS = ["segunda", "terca", "quarta", "quinta", "sexta", "sabado"]
 SHEET_ALIASES = {
     "grade": ("grade", "horario", "horarios", "school_hours"),
     "turmas": ("turmas", "classes", "class_groups"),
@@ -42,6 +41,9 @@ def _sheet_name(book: pd.ExcelFile, aliases: tuple[str, ...]) -> str | None:
         if alias in mapping:
             return mapping[alias]
     return None
+
+
+# Planilha → entidades
 
 
 def grade_from_df(df: pd.DataFrame) -> SchoolHours:
@@ -165,6 +167,9 @@ def subjects_from_df(
     return subjects
 
 
+# Arquivo → entidades
+
+
 def load_teachers(path: str | Path, hours: SchoolHours) -> list[Teacher]:
     return teachers_from_df(_read(path), hours)
 
@@ -185,11 +190,8 @@ def load_grade(path: str | Path) -> SchoolHours:
     return grade_from_df(_read(path))
 
 
-def load_from_workbook(
-    path: str | Path,
-) -> tuple[list[Teacher], list[ClassGroup], list[Subject], list[TimeSlot]]:
-    path = Path(path)
-    book = pd.ExcelFile(path)
+def load_from_workbook(source) -> SchoolInstance:
+    book = pd.ExcelFile(source)
     missing = []
     frames: dict[str, pd.DataFrame] = {}
     for key, aliases in SHEET_ALIASES.items():
@@ -208,4 +210,48 @@ def load_from_workbook(
     teachers = teachers_from_df(frames["professores"], hours)
     class_groups = class_groups_from_df(frames["turmas"], hours)
     subjects = subjects_from_df(frames["aulas"], teachers, class_groups)
-    return teachers, class_groups, subjects, build_time_slots(hours)
+    return SchoolInstance(
+        teachers=teachers,
+        class_groups=class_groups,
+        subjects=subjects,
+        time_slots=build_time_slots(hours),
+    )
+
+
+# Entidades → planilha (tela Streamlit)
+
+
+def teachers_to_df(teachers: list[Teacher], hours: SchoolHours) -> pd.DataFrame:
+    rows = []
+    for teacher in teachers:
+        row = {"professor": teacher.name}
+        for day in DAYS:
+            row[day] = f"{day}_{hours.shift}" in teacher.available_periods
+        rows.append(row)
+    return pd.DataFrame(rows)
+
+
+def class_groups_to_df(class_groups: list[ClassGroup]) -> pd.DataFrame:
+    return pd.DataFrame(
+        [{"turma": group.name, "turno": group.shift or ""} for group in class_groups]
+    )
+
+
+def subjects_to_df(
+    subjects: list[Subject],
+    teachers: list[Teacher],
+    class_groups: list[ClassGroup],
+) -> pd.DataFrame:
+    teacher_name = {item.id: item.name for item in teachers}
+    group_name = {item.id: item.name for item in class_groups}
+    return pd.DataFrame(
+        [
+            {
+                "turma": group_name.get(subject.class_group_id, subject.class_group_id),
+                "disciplina": subject.name,
+                "professor": teacher_name.get(subject.teacher_id, subject.teacher_id),
+                "aulas_semanais": subject.weekly_workload,
+            }
+            for subject in subjects
+        ]
+    )

@@ -1,4 +1,7 @@
-"""Atalho para a instância JSON em data/. Equivale a `python main.py --entrada ../data`."""
+"""Atalho para a instância JSON em data/.
+
+Equivale a: python main.py --entrada ../data
+"""
 
 import sys
 from pathlib import Path

@@ -1,1 +1,1 @@
-"""Operadores do AG: população inicial, seleção, crossover, mutação e repair."""
+"""Operadores: população inicial, torneio, cruzamento, mutação e repair."""

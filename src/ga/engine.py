@@ -1,4 +1,11 @@
-"""Uma geração do AG: fitness → elitismo → selection → crossover → mutation → repair."""
+"""Loop do AG.
+
+Cada geração:
+    1. avalia a população (fitness H1–H4, S1)
+    2. guarda o melhor Schedule visto até agora
+    3. elitismo: os melhores passam intactos
+    4. o resto nasce de: torneio → crossover → mutação → repair
+"""
 
 from dataclasses import dataclass, field
 from time import perf_counter
@@ -24,6 +31,28 @@ class GAResult:
     history: list[dict] = field(default_factory=list)
 
 
+def _evaluate_population(
+    population: list[Schedule],
+    context: GAContext,
+) -> tuple[list[FitnessBreakdown], list[float]]:
+    breakdowns = [evaluate_details(individual, context) for individual in population]
+    fitnesses = [item.fitness for item in breakdowns]
+    return breakdowns, fitnesses
+
+
+def _make_children(
+    parent1: Schedule,
+    parent2: Schedule,
+    context: GAContext,
+    crossover_rate: float,
+    mutation_rate: float,
+) -> tuple[Schedule, Schedule]:
+    child1, child2 = crossover(parent1, parent2, context, crossover_rate)
+    child1 = repair_schedule(mutate(child1, context, mutation_rate), context)
+    child2 = repair_schedule(mutate(child2, context, mutation_rate), context)
+    return child1, child2
+
+
 def run_ga(
     context: GAContext,
     population_size: int = 80,
@@ -35,7 +64,7 @@ def run_ga(
     verbose: bool = True,
 ) -> GAResult:
     started = perf_counter()
-    population: list[Schedule] = generate_population(population_size, context)
+    population = generate_population(population_size, context)
 
     best_schedule = population[0]
     best_fitness = float("-inf")
@@ -45,12 +74,10 @@ def run_ga(
 
     for generation in range(1, generations + 1):
         generation_reached = generation
-        breakdowns = [evaluate_details(individual, context) for individual in population]
-        fitnesses = [item.fitness for item in breakdowns]
+        breakdowns, fitnesses = _evaluate_population(population, context)
 
         best_index = max(range(len(fitnesses)), key=lambda index: fitnesses[index])
         generation_best = fitnesses[best_index]
-
         if generation_best > best_fitness:
             best_fitness = generation_best
             best_schedule = population[best_index]
@@ -86,9 +113,9 @@ def run_ga(
         while len(new_population) < population_size:
             parent1 = tournament_selection(population, fitnesses, tournament_size)
             parent2 = tournament_selection(population, fitnesses, tournament_size)
-            child1, child2 = crossover(parent1, parent2, context, crossover_rate)
-            child1 = repair_schedule(mutate(child1, context, mutation_rate), context)
-            child2 = repair_schedule(mutate(child2, context, mutation_rate), context)
+            child1, child2 = _make_children(
+                parent1, parent2, context, crossover_rate, mutation_rate
+            )
             new_population.append(child1)
             if len(new_population) < population_size:
                 new_population.append(child2)

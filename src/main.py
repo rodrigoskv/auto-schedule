@@ -1,4 +1,4 @@
-"""Ponto de entrada: carrega a instância, valida e roda o AG."""
+"""CLI: carrega a escola, valida, roda o AG e imprime o horário."""
 
 import argparse
 import sys
@@ -9,28 +9,18 @@ from data.templates import write_templates
 from data.validate import validate_instance
 from ga.context import GAContext
 from ga.engine import run_ga
-from ga.operators.representation import SLOT_ORDERING_STRATEGIES
 from reporting.printer import print_result
 
-SLOT_ORDERING_STRATEGY = "shift_then_day"
-CROSSOVER_RATE = 0.8
-MUTATION_RATE = 0.08
-ELITISM_COUNT = 2
-TOURNAMENT_SIZE = 3
 DEFAULT_DATA = Path(__file__).resolve().parents[1] / "data"
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Auto-Schedule: gera horário escolar com AG.")
-    parser.add_argument(
-        "--entrada",
-        default=str(DEFAULT_DATA),
-        help="Pasta JSON, planilha do molde (Grade/Turmas/Professores/Aulas) ou trio de planilhas.",
-    )
-    parser.add_argument("--somente-validar", action="store_true", help="Carrega e valida sem executar o AG.")
+    parser.add_argument("--entrada", default=str(DEFAULT_DATA), help="Pasta JSON, molde.xlsx ou trio de planilhas.")
+    parser.add_argument("--somente-validar", action="store_true")
     parser.add_argument("--populacao", type=int, default=80)
     parser.add_argument("--geracoes", type=int, default=200)
-    parser.add_argument("--moldes", action="store_true", help="Grava planilhas-modelo em data/input.")
+    parser.add_argument("--moldes", action="store_true")
     return parser.parse_args()
 
 
@@ -44,19 +34,19 @@ def main() -> None:
 
     print(f"Carregando entrada: {Path(args.entrada)}")
     try:
-        teachers, class_groups, subjects, time_slots = load_instance(args.entrada)
+        school = load_instance(args.entrada)
     except (OSError, TypeError, ValueError) as exc:
         print(f"Erro ao carregar entrada: {exc}", file=sys.stderr)
         sys.exit(1)
 
     print(
-        f"  {len(teachers)} professores | "
-        f"{len(class_groups)} turmas | "
-        f"{len(subjects)} disciplinas | "
-        f"{len(time_slots)} time slots"
+        f"  {len(school.teachers)} professores | "
+        f"{len(school.class_groups)} turmas | "
+        f"{len(school.subjects)} disciplinas | "
+        f"{len(school.time_slots)} time slots"
     )
 
-    errors, warnings = validate_instance(teachers, class_groups, subjects, time_slots)
+    errors, warnings = validate_instance(school)
     for warning in warnings:
         print(f"Aviso: {warning}")
     if errors:
@@ -69,22 +59,11 @@ def main() -> None:
         print("Instância válida.")
         return
 
-    context = GAContext(
-        teachers=teachers,
-        class_groups=class_groups,
-        subjects=subjects,
-        time_slots=time_slots,
-        slot_ordering_key=SLOT_ORDERING_STRATEGIES[SLOT_ORDERING_STRATEGY],
-    )
-
+    context = GAContext.from_school(school)
     result = run_ga(
-        context=context,
+        context,
         population_size=args.populacao,
         generations=args.geracoes,
-        crossover_rate=CROSSOVER_RATE,
-        mutation_rate=MUTATION_RATE,
-        elitism_count=ELITISM_COUNT,
-        tournament_size=TOURNAMENT_SIZE,
         verbose=True,
     )
     print_result(result, context)

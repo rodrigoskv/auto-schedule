@@ -1,4 +1,11 @@
-"""Repair: aloca aulas sem slot, corrige H4 (disponibilidade) e H1 (choque de professor)."""
+"""Repair depois do crossover/mutação.
+
+Ordem:
+    1. aulas sem horário          → tenta um slot livre (respeita H4)
+    2. professor indisponível H4  → muda de slot ou troca com outra aula
+    3. choque de professor H1     → a aula extra muda de slot
+    4. o que ainda ficou sem horário tenta de novo
+"""
 
 import copy
 import random

@@ -1,8 +1,11 @@
-"""Representação da solução no algoritmo genético.
+"""Como a solução é representada.
 
-Indivíduo  = Schedule
-Cromossomo = lista de Lesson
-Gene       = uma Lesson (professor, disciplina, turma, horário)
+    Indivíduo  = Schedule
+    Cromossomo = lista de Lesson
+    Gene       = Lesson (professor, disciplina, turma, horário)
+
+As funções abaixo só ordenam TimeSlot (impressão e índices).
+O AG usa shift_then_day por padrão.
 """
 
 from typing import Callable

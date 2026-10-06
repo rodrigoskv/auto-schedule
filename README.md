@@ -1,41 +1,38 @@
 # Auto-Schedule
 
-Algoritmo genético para gerar horário escolar.
-
-A Escola Bandeirante é só a instância de teste em `data/`. O AG não assume quantidade fixa de professores, turmas, disciplinas ou slots.
-
-## Como ler o código
+AG para horário escolar. Quem for ler o código pode seguir este caminho:
 
 ```text
-entrada (JSON ou planilha)
-    → src/data/instance.py          load_instance
-    → src/data/validate.py          validate_instance
-    → Teacher / ClassGroup / Subject / TimeSlot
-    → src/ga/context.py             GAContext
-    → src/ga/operators/initial_population.py
-    → src/ga/engine.py              run_ga
-         ├── fitness.py             H1–H4, S1
-         ├── selection.py
-         ├── crossover.py
-         ├── mutation.py
-         └── repair.py
-    → melhor Schedule
-    → src/reporting/printer.py
+1. entrada          src/data/instance.py        load_instance → SchoolInstance
+2. validação        src/data/validate.py
+3. representação    src/domain/entities.py      Schedule = indivíduo, Lesson = gene
+                    Subject.class_group_id é a turma (campo explícito)
+4. contexto         src/ga/context.py           GAContext.from_school
+5. população        src/ga/operators/initial_population.py
+6. uma geração      src/ga/engine.py            run_ga
+     fitness        src/ga/fitness.py           H1–H4, S1
+     seleção        src/ga/operators/selection.py
+     crossover      src/ga/operators/crossover.py
+     mutação        src/ga/operators/mutation.py
+     repair         src/ga/operators/repair.py
+7. resultado        src/reporting/printer.py
 ```
 
-Representação: `Schedule` é o indivíduo, a lista de `Lesson` é o cromossomo, cada `Lesson` é um gene.
+A Bandeirante é só o exemplo em `data/`.
 
-`Subject.class_group_id` é obrigatório. A turma da disciplina é esse campo.
+## Tela
 
-## Rodar
+```text
+streamlit run src/ui/app.py
+```
 
-A partir de `src/`:
+A tela monta a mesma `SchoolInstance` do CLI: tabelas (ou molde.xlsx / JSON) → validação → `run_ga`.
+
+## Terminal (a partir de `src/`)
 
 ```text
 python main.py --entrada ../data
 python main.py --entrada ../data --somente-validar
-python main.py --entrada ../data --populacao 80 --geracoes 200
 python main.py --moldes
+python main_data.py
 ```
-
-`--entrada` aceita pasta JSON, planilha com abas Grade / Turmas / Professores / Aulas, ou o trio `turmas.xlsx` + `professores.xlsx` + `aulas.xlsx` com `grade.json`.

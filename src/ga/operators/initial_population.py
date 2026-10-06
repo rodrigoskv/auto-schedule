@@ -1,4 +1,11 @@
-"""População inicial: um Schedule por indivíduo, aulas sorteadas nos slots da turma."""
+"""População inicial.
+
+Para cada turma:
+    pega as aulas exigidas (disciplina × carga semanal)
+    pega os slots da turma
+    embaralha os dois e casa um a um
+    se faltar slot, a aula fica sem horário (conta em H3)
+"""
 
 import random
 

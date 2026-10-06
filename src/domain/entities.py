@@ -54,6 +54,16 @@ class TimeSlot:
 
 
 @dataclass
+class SchoolInstance:
+    """Escola carregada: entrada já convertida nas entidades do problema."""
+
+    teachers: list[Teacher]
+    class_groups: list[ClassGroup]
+    subjects: list[Subject]
+    time_slots: list[TimeSlot]
+
+
+@dataclass
 class Lesson:
     teacher_id: str
     subject_id: str

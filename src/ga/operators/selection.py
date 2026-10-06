@@ -1,4 +1,4 @@
-"""Seleção por torneio."""
+"""Seleção por torneio: sorteia k indivíduos e devolve o de maior fitness."""
 
 import random
 
