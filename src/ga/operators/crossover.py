@@ -15,6 +15,7 @@ from ga.context import GAContext
 
 
 def _two_point_mix(lessons1: list[Lesson], lessons2: list[Lesson]) -> list[Lesson]:
+    """Corta em dois pontos e cola um trecho de um pai no meio do outro."""
     size = max(len(lessons1), len(lessons2))
     if size < 2:
         return copy.deepcopy(lessons1) if lessons1 else copy.deepcopy(lessons2)
@@ -30,6 +31,7 @@ def _two_point_mix(lessons1: list[Lesson], lessons2: list[Lesson]) -> list[Lesso
 
 
 def _restore_workload(lessons: list[Lesson], class_group_id: str, context: GAContext) -> list[Lesson]:
+    """Depois da mistura, recoloca a quantidade certa de aulas de cada disciplina."""
     required = context.required_lessons_for_class(class_group_id)
     required_counts = Counter(required)
     kept: list[Lesson] = []
@@ -58,6 +60,7 @@ def _restore_workload(lessons: list[Lesson], class_group_id: str, context: GACon
 
 
 def _assign_unique_slots(lessons: list[Lesson], context: GAContext, class_group_id: str) -> list[Lesson]:
+    """Garante no máximo uma aula da turma por slot (evita H2)."""
     used_slots: set[str] = set()
     result: list[Lesson] = []
     pending: list[Lesson] = []
@@ -90,6 +93,7 @@ def crossover(
     context: GAContext,
     crossover_rate: float = 0.8,
 ) -> tuple[Schedule, Schedule]:
+    """Gera dois filhos misturando os pais; com chance, só copia os pais."""
     if random.random() > crossover_rate:
         return copy.deepcopy(parent1), copy.deepcopy(parent2)
 

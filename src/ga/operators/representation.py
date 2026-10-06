@@ -25,6 +25,7 @@ SHIFT_ORDER = {"manha": 0, "tarde": 1, "noite": 2}
 
 
 def order_by_day_shift_order(slot: TimeSlot) -> tuple:
+    """Ordena a semana por dia, depois turno, depois aula."""
     return (
         DAY_ORDER.get(slot.day_of_week, 99),
         SHIFT_ORDER.get(slot.shift, 99),
@@ -33,10 +34,12 @@ def order_by_day_shift_order(slot: TimeSlot) -> tuple:
 
 
 def order_by_global_order(slot: TimeSlot) -> int:
+    """Usa o índice sequencial já gravado no TimeSlot."""
     return slot.global_order
 
 
 def order_by_shift_then_day(slot: TimeSlot) -> tuple:
+    """Agrupa o horário por turno (manhã/tarde/noite) antes de quebrar por dia."""
     return (
         SHIFT_ORDER.get(slot.shift, 99),
         DAY_ORDER.get(slot.day_of_week, 99),

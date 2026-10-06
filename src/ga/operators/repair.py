@@ -15,6 +15,7 @@ from ga.context import GAContext
 
 
 def _free_slots_for_class(schedule: Schedule, context: GAContext, class_group_id: str) -> list[str]:
+    """Horários da turma que ainda não têm aula."""
     occupied = schedule.occupied_slot_ids_for_class(class_group_id)
     return [slot.id for slot in context.slots_for_class(class_group_id) if slot.id not in occupied]
 
@@ -25,6 +26,7 @@ def _teacher_free_at(
     time_slot_id: str,
     ignore: Lesson | None = None,
 ) -> bool:
+    """True se o professor não está em outra turma nesse horário."""
     occupants = schedule.get_teacher_cell_lesson(time_slot_id, teacher_id)
     return all(occupant is ignore for occupant in occupants)
 
@@ -35,6 +37,7 @@ def _relocate_lesson(
     context: GAContext,
     require_availability: bool,
 ) -> bool:
+    """Tenta um slot livre sem criar choque de professor nem furar disponibilidade."""
     candidates = _free_slots_for_class(schedule, context, lesson.class_group_id)
     random.shuffle(candidates)
 
@@ -49,6 +52,7 @@ def _relocate_lesson(
 
 
 def _swap_for_availability(schedule: Schedule, lesson: Lesson, context: GAContext) -> bool:
+    """Troca com outra aula da turma quando não há slot livre para o professor."""
     same_class = [
         other
         for other in schedule.get_lessons_for_class_group(lesson.class_group_id)
@@ -72,6 +76,7 @@ def _swap_for_availability(schedule: Schedule, lesson: Lesson, context: GAContex
 
 
 def repair_unassigned(schedule: Schedule, context: GAContext) -> None:
+    """Encaixa aulas que ficaram sem horário (reduz H3)."""
     unassigned = schedule.get_unassigned_lessons()
     random.shuffle(unassigned)
     for lesson in unassigned:
@@ -79,6 +84,7 @@ def repair_unassigned(schedule: Schedule, context: GAContext) -> None:
 
 
 def repair_teacher_availability(schedule: Schedule, context: GAContext) -> None:
+    """Tira o professor de um dia/turno em que ele não pode (H4)."""
     violating = [
         lesson
         for lesson in schedule.lessons
@@ -97,6 +103,7 @@ def repair_teacher_availability(schedule: Schedule, context: GAContext) -> None:
 
 
 def repair_teacher_conflicts(schedule: Schedule, context: GAContext) -> None:
+    """Se o professor está em duas turmas no mesmo slot, a extra muda ou sai (H1)."""
     for slot in context.time_slots:
         lessons = schedule.get_lessons_for_time_slot(slot.id)
         by_teacher: dict[str, list[Lesson]] = {}
@@ -112,6 +119,7 @@ def repair_teacher_conflicts(schedule: Schedule, context: GAContext) -> None:
 
 
 def repair_schedule(schedule: Schedule, context: GAContext) -> Schedule:
+    """Aplica os reparos na ordem: sem horário → H4 → H1 → sem horário de novo."""
     repaired = copy.deepcopy(schedule)
     repair_unassigned(repaired, context)
     repair_teacher_availability(repaired, context)

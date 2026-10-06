@@ -14,6 +14,7 @@ from ga.context import GAContext
 
 
 def generate_individual(context: GAContext) -> Schedule:
+    """Sorteia um horário inicial: aulas da turma nos slots, o que sobrar fica sem horário."""
     schedule = Schedule()
 
     for group in context.class_groups:
@@ -38,4 +39,5 @@ def generate_individual(context: GAContext) -> Schedule:
 
 
 def generate_population(size: int, context: GAContext) -> list[Schedule]:
+    """Cria `size` indivíduos independentes para começar o AG."""
     return [generate_individual(context) for _ in range(size)]

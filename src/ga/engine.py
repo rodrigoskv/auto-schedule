@@ -35,6 +35,7 @@ def _evaluate_population(
     population: list[Schedule],
     context: GAContext,
 ) -> tuple[list[FitnessBreakdown], list[float]]:
+    """Calcula H1–H4 e S1 de cada indivíduo da geração."""
     breakdowns = [evaluate_details(individual, context) for individual in population]
     fitnesses = [item.fitness for item in breakdowns]
     return breakdowns, fitnesses
@@ -47,6 +48,7 @@ def _make_children(
     crossover_rate: float,
     mutation_rate: float,
 ) -> tuple[Schedule, Schedule]:
+    """Nasce um par de filhos: cruza os pais, muta e repara."""
     child1, child2 = crossover(parent1, parent2, context, crossover_rate)
     child1 = repair_schedule(mutate(child1, context, mutation_rate), context)
     child2 = repair_schedule(mutate(child2, context, mutation_rate), context)
@@ -63,6 +65,7 @@ def run_ga(
     tournament_size: int = 3,
     verbose: bool = True,
 ) -> GAResult:
+    """Roda as gerações e devolve o melhor Schedule encontrado."""
     started = perf_counter()
     population = generate_population(population_size, context)
 

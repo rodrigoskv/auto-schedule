@@ -10,6 +10,7 @@ def tournament_selection(
     fitnesses: list[float],
     tournament_size: int = 3,
 ) -> Schedule:
+    """Escolhe um pai: sorteia k horários e fica com o de maior fitness."""
     indices = random.sample(range(len(population)), k=min(tournament_size, len(population)))
     best_idx = max(indices, key=lambda index: fitnesses[index])
     return population[best_idx]

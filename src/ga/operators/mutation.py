@@ -15,6 +15,7 @@ MOVE_TO_FREE_CHANCE = 0.35
 
 
 def _move_to_free_slot(lesson, free_slots: list[str]) -> None:
+    """Muda a aula para um horário vazio da turma e devolve o slot antigo."""
     target = random.choice(free_slots)
     if lesson.time_slot_id:
         free_slots.append(lesson.time_slot_id)
@@ -27,6 +28,7 @@ def mutate(
     context: GAContext,
     mutation_rate: float = 0.08,
 ) -> Schedule:
+    """Perturba o horário: slot livre ou troca com outra aula da mesma turma."""
     mutated = copy.deepcopy(schedule)
 
     for group in context.class_groups:
