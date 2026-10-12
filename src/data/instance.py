@@ -1,7 +1,7 @@
 """Carrega Teacher, ClassGroup, Subject e TimeSlot.
 
 Aceita pasta JSON, molde.xlsx (abas Grade/Turmas/Professores/Aulas)
-ou o trio turmas.xlsx + professores.xlsx + aulas.xlsx com grade.json.
+ou o trio CSV/Excel (teachers + classgroups + subjects) com grade.
 """
 
 import json
@@ -79,20 +79,39 @@ def _hours(folder: Path):
     grade_json = folder / "grade.json"
     if grade_json.is_file():
         return hours_from_grade(_read_json(grade_json))
-    grade_xlsx = _file(folder, "grade.xlsx")
-    if grade_xlsx is not None:
-        return load_grade(grade_xlsx)
-    raise ValueError("Pasta sem grade.json. Informe school_days, shift e lessons_per_day.")
+    grade_table = _file(folder, "grade.csv", "grade.xlsx")
+    if grade_table is not None:
+        return load_grade(grade_table)
+    raise ValueError("Pasta sem grade.json / grade.csv. Informe school_days, shift e lessons_per_day.")
 
 
 def _load_trio(folder: Path) -> SchoolInstance:
-    teachers_path = _file(folder, "professores.xlsx", "professores.csv")
-    classes_path = _file(folder, "turmas.xlsx", "turmas.csv")
-    subjects_path = _file(folder, "aulas.xlsx", "aulas.csv")
+    teachers_path = _file(
+        folder,
+        "teachers.csv",
+        "teachers.xlsx",
+        "professores.xlsx",
+        "professores.csv",
+    )
+    classes_path = _file(
+        folder,
+        "classgroups.csv",
+        "class_groups.csv",
+        "classes.csv",
+        "turmas.xlsx",
+        "turmas.csv",
+    )
+    subjects_path = _file(
+        folder,
+        "subjects.csv",
+        "lessons.csv",
+        "aulas.xlsx",
+        "aulas.csv",
+    )
     if not teachers_path or not classes_path or not subjects_path:
         raise ValueError(
             "Entrada deve ser pasta JSON, molde.xlsx "
-            "ou trio turmas.xlsx + professores.xlsx + aulas.xlsx com grade.json."
+            "ou trio teachers/classgroups/subjects (CSV ou Excel) com grade.csv."
         )
     hours = _hours(folder)
     teachers = load_teachers(teachers_path, hours)

@@ -16,6 +16,37 @@ DAY_LABEL = {
 SHIFT_LABEL = {"manha": "Manhã", "tarde": "Tarde", "noite": "Noite"}
 DAYS = list(DAY_LABEL)
 
+DAY_ALIASES = {
+    "segunda": ("segunda", "seg", "monday", "mon"),
+    "terca": ("terca", "terça", "ter", "tuesday", "tue"),
+    "quarta": ("quarta", "qua", "wednesday", "wed"),
+    "quinta": ("quinta", "qui", "thursday", "thu", "thur", "thurs"),
+    "sexta": ("sexta", "sex", "friday", "fri"),
+    "sabado": ("sabado", "sábado", "sab", "saturday", "sat"),
+}
+SHIFT_ALIASES = {
+    "manha": ("manha", "manhã", "morning", "am"),
+    "tarde": ("tarde", "afternoon", "pm"),
+    "noite": ("noite", "evening", "night"),
+}
+
+
+def _alias_map(groups: dict[str, tuple[str, ...]]) -> dict[str, str]:
+    mapping: dict[str, str] = {}
+    for canon, aliases in groups.items():
+        mapping[canon] = canon
+        for alias in aliases:
+            mapping[slugify(alias)] = canon
+    return mapping
+
+
+_DAY_CANON = _alias_map(DAY_ALIASES)
+_SHIFT_CANON = _alias_map(SHIFT_ALIASES)
+
+
+def day_column_names(day: str) -> tuple[str, ...]:
+    return DAY_ALIASES.get(day, (day,))
+
 
 @dataclass
 class SchoolHours:
@@ -29,11 +60,13 @@ class SchoolHours:
 
 
 def normalize_day(value: str) -> str:
-    return slugify(str(value))
+    key = slugify(str(value))
+    return _DAY_CANON.get(key, key)
 
 
 def normalize_shift(value: str) -> str:
-    return slugify(str(value))
+    key = slugify(str(value))
+    return _SHIFT_CANON.get(key, key)
 
 
 def parse_days(value) -> list[str]:

@@ -45,7 +45,7 @@ def write_templates(folder: str | Path) -> None:
     folder = Path(folder)
     folder.mkdir(parents=True, exist_ok=True)
 
-    with pd.ExcelWriter(folder / "molde.xlsx") as writer:
+    with pd.ExcelWriter(folder / "molde.xlsx", engine="openpyxl") as writer:
         GRADE_DF.to_excel(writer, sheet_name="Grade", index=False)
         CLASSES_DF.to_excel(writer, sheet_name="Turmas", index=False)
         TEACHERS_DF.to_excel(writer, sheet_name="Professores", index=False)
@@ -64,7 +64,7 @@ def molde_bytes() -> bytes:
     from io import BytesIO
 
     buffer = BytesIO()
-    with pd.ExcelWriter(buffer) as writer:
+    with pd.ExcelWriter(buffer, engine="openpyxl") as writer:
         GRADE_DF.to_excel(writer, sheet_name="Grade", index=False)
         CLASSES_DF.to_excel(writer, sheet_name="Turmas", index=False)
         TEACHERS_DF.to_excel(writer, sheet_name="Professores", index=False)
