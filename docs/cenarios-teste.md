@@ -90,6 +90,39 @@ Arquivo: `tests/test_validate.py`
 | Professor com mais aulas do que horários | aviso |
 | JSON Bandeirante em `data/` | carrega; avisa nas turmas com carga > 25 |
 
+## Planilhas
+
+Arquivo: `tests/test_excel_io.py`
+
+| Cenário | Esperado |
+|---|---|
+| Professor com todos os dias em N | `available_periods` fica vazio |
+| Professor repetido na tabela | erro |
+| Turma duplicada | erro |
+| "6 ano A" com turma cadastrada "6º ano A" | casa o `class_group_id` |
+| Nome de professor com erro de digitação | erro sugere o nome próximo |
+| Vários erros na mesma tabela de aulas | uma mensagem junta turma, professor, carga e campo em branco |
+| Carga 2.5 | erro (precisa ser inteiro) |
+
+## Exemplo em CSV
+
+Arquivo: `tests/test_example.py`
+
+| Cenário | Esperado |
+|---|---|
+| `monday` / `Tuesday` / `morning` | viram `segunda`, `terca`, `manha` |
+| Pasta `example/` | carrega sem erro nem aviso; 2 turmas, 6 professores, 25 slots da manhã; carga de cada turma cabe nos slots |
+
+## Relatório
+
+Arquivo: `tests/test_reporting.py`
+
+| Cenário | Esperado |
+|---|---|
+| Grade perfeita | status `ok` e nenhum problema listado |
+| 2 hard + 3 soft | status `bad`; títulos de H1 e de H3 |
+| Aula com `time_slot_id` vazio | uma linha Turma / Disciplina / Professor |
+
 ## O AG de ponta a ponta
 
 Arquivo: `tests/test_ga.py`

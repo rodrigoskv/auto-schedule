@@ -18,7 +18,9 @@ AG para horário escolar. Quem for ler o código pode seguir este caminho:
 7. resultado        src/reporting/printer.py
 ```
 
-A Bandeirante é só o exemplo em `data/`.
+A Bandeirante é a instância em `data/`. `example/` é um CSV pequeno, com nomes em inglês, só para carregar e validar.
+
+Critérios da grade: `docs/criterios-avaliacao.md`. Entidades: `docs/modelagem.md`. Cenários: `docs/cenarios-teste.md`.
 
 ## Tela
 
@@ -35,4 +37,10 @@ python main.py --entrada ../data
 python main.py --entrada ../data --somente-validar
 python main.py --moldes
 python main_data.py
+```
+
+## Testes (na raiz)
+
+```text
+pytest
 ```
